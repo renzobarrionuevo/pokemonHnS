@@ -445,6 +445,7 @@ struct BattleStruct
     u8 alreadyStatusedMoveAttempt; // As bits for battlers; For example when using Thunder Wave on an already paralyzed Pokémon.
     bool8 throwingPokeBall;
     u8 ballSpriteIds[2];
+    u8 rkStyleFailedBallThrows; // RKstyle: failed Poke Ball throws in this battle
 };
 
 // The palaceFlags member of struct BattleStruct contains 1 flag per move to indicate which moves the AI should consider,

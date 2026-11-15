@@ -613,9 +613,14 @@ static bool8 AreLegendariesInSootopolisPreventingEncounters(void)
 
 // RKstyle: automatic repel. Once a Pokemon has been caught in a zone, no more wild
 // Pokemon appear there by any means (walking, surfing, fishing, Rock Smash, Sweet Scent).
+// Also closed everywhere until the player has been given the first balls.
 static bool8 IsRKStyleZoneClosed(void)
 {
-    return IsRKStyleActive() && IsNuzlockeActive() && NuzlockeFlagGet(NuzlockeGetCurrentRegionMapSectionId());
+    if (!IsRKStyleActive())
+        return FALSE;
+    if (!FlagGet(FLAG_RECEIVED_FIRST_BALLS))
+        return TRUE;
+    return IsNuzlockeActive() && NuzlockeFlagGet(NuzlockeGetCurrentRegionMapSectionId());
 }
 
 bool8 StandardWildEncounter(u16 curMetatileBehavior, u16 prevMetatileBehavior)

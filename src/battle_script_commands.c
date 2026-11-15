@@ -10899,6 +10899,20 @@ static void Cmd_handleballthrow(void)
         if (gBattleMons[gBattlerTarget].status1 & (STATUS1_POISON | STATUS1_BURN | STATUS1_PARALYSIS | STATUS1_TOXIC_POISON))
             odds = (odds * 15) / 10;
 
+        // RKstyle: every failed throw in this battle doubles the odds of the next one
+        if (IsRKStyleActive())
+        {
+            u8 shift = gBattleStruct->rkStyleFailedBallThrows;
+
+            if (shift > 8)
+                shift = 8;
+            if (odds == 0)
+                odds = 1;
+            odds <<= shift;
+            if (gBattleStruct->rkStyleFailedBallThrows < 255)
+                gBattleStruct->rkStyleFailedBallThrows++;
+        }
+
         if (gLastUsedItem != ITEM_SAFARI_BALL)
         {
             if (gLastUsedItem == ITEM_MASTER_BALL)

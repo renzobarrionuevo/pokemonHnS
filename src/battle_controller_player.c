@@ -766,7 +766,7 @@ static void HandleInputChooseMove(void)
     }
     if (sDescriptionSubmenu)
     {
-        if (JOY_NEW(START_BUTTON) || JOY_NEW(A_BUTTON) || JOY_NEW(B_BUTTON))
+        if (JOY_NEW(START_BUTTON) || JOY_NEW(L_BUTTON) || JOY_NEW(A_BUTTON) || JOY_NEW(B_BUTTON))
         {
             sDescriptionSubmenu = FALSE;
             FillWindowPixelBuffer(B_WIN_MOVE_DESCRIPTION, PIXEL_FILL(0));
@@ -777,7 +777,7 @@ static void HandleInputChooseMove(void)
             MoveSelectionDisplayMoveType();
         }
     }
-    else if (JOY_NEW(START_BUTTON)) //AdditionalBattleInfo
+    else if (JOY_NEW(START_BUTTON) || JOY_NEW(L_BUTTON)) //AdditionalBattleInfo (START or L)
     {
         sDescriptionSubmenu = TRUE;
         MoveSelectionDisplayMoveDescription();

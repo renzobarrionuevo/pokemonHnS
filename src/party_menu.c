@@ -95,6 +95,9 @@ enum {
     MENU_TRADE1,
     MENU_TRADE2,
     MENU_TOSS,
+    MENU_CANDY,      // RKstyle: opens the RARE CANDY / MAX CANDY submenu
+    MENU_RARE_CANDY, // RKstyle
+    MENU_MAX_CANDY,  // RKstyle
     MENU_FIELD_MOVES
 };
 
@@ -114,6 +117,7 @@ enum {
     ACTIONS_TRADE,
     ACTIONS_SPIN_TRADE,
     ACTIONS_TAKEITEM_TOSS,
+    ACTIONS_CANDY, // RKstyle
 };
 
 // In CursorCb_FieldMove, field moves <= FIELD_MOVE_WATERFALL are assumed to line up with the badge flags.
@@ -197,7 +201,7 @@ struct PartyMenuInternal
     u32 spriteIdCancelPokeball:7;
     u32 messageId:14;
     u8 windowId[3];
-    u8 actions[8];
+    u8 actions[9]; // 9 = SUMMARY + up to 4 field moves + SWITCH + ITEM + CANDY (RKstyle) + CANCEL
     u8 numActions;
     // In vanilla Emerald, only the first 0xB0 hwords (0x160 bytes) are actually used.
     // However, a full 0x100 hwords (0x200 bytes) are allocated.
@@ -233,6 +237,7 @@ EWRAM_DATA u8 gSelectedOrderFromParty[MAX_FRONTIER_PARTY_SIZE] = {0};
 static EWRAM_DATA u16 sPartyMenuItemId = 0;
 static EWRAM_DATA u16 sUnused = 0;
 static EWRAM_DATA u8 sMaxCandyTargetLevel = 0; // RKstyle Max Candy: level the mon was raised to
+static EWRAM_DATA bool8 sCandyFromPartyMenu = FALSE; // RKstyle: candy picked from a Pokemon's action menu, not from the bag
 
 #define IS_LEVEL_CANDY(item) ((item) == ITEM_RARE_CANDY || (item) == ITEM_MAX_CANDY)
 EWRAM_DATA u8 gBattlePartyCurrentOrder[PARTY_SIZE / 2] = {0}; // bits 0-3 are the current pos of Slot 1, 4-7 are Slot 2, and so on
@@ -486,6 +491,14 @@ static void CursorCb_Trade1(u8);
 static void CursorCb_Trade2(u8);
 static void CursorCb_Toss(u8);
 static void CursorCb_FieldMove(u8);
+static void CursorCb_Candy(u8);
+static void CursorCb_RareCandy(u8);
+static void CursorCb_MaxCandy(u8);
+static void CB2_ReturnToPartyMenuAfterCandy(void);
+
+static const u8 sText_MenuCandy[]     = _("CANDY");
+static const u8 sText_MenuRareCandy[] = _("RARE CANDY");
+static const u8 sText_MenuMaxCandy[]  = _("MAX CANDY");
 static bool8 SetUpFieldMove_Surf(void);
 static bool8 SetUpFieldMove_Fly(void);
 static bool8 SetUpFieldMove_Waterfall(void);
@@ -2750,6 +2763,11 @@ static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
         else
             AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_ITEM);
     }
+    // RKstyle: CANDY entry, which opens the RARE CANDY / MAX CANDY submenu.
+    // At this point the list holds 7 entries at most, so CANDY + CANCEL always fit in actions[9].
+    if (IsRKStyleActive() && gPartyMenu.menuType == PARTY_MENU_TYPE_FIELD && !GetMonData(&mons[slotId], MON_DATA_IS_EGG)
+     && CheckBagHasItem(ITEM_RARE_CANDY, 1) && CheckBagHasItem(ITEM_MAX_CANDY, 1))
+        AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_CANDY);
     AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_CANCEL1);
 }
 
@@ -3195,6 +3213,47 @@ static void CursorCb_Cancel1(u8 taskId)
     else
         DisplayPartyMenuStdMessage(PARTY_MSG_CHOOSE_MON);
     gTasks[taskId].func = Task_HandleChooseMonInput;
+}
+
+// RKstyle: use a Rare Candy / Max Candy on the selected Pokemon from its action menu
+static void UseCandyFromPartyMenu(u8 taskId, u16 item)
+{
+    PlaySE(SE_SELECT);
+    PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[0]);
+    PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[1]);
+    gSpecialVar_ItemId = item;
+    gItemUseCB = ItemUseCB_RareCandy;
+    sCandyFromPartyMenu = TRUE;
+    ItemUseCB_RareCandy(taskId, Task_ReturnToChooseMonAfterText);
+}
+
+static void CursorCb_Candy(u8 taskId)
+{
+    PlaySE(SE_SELECT);
+    PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[0]);
+    PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[1]);
+    SetPartyMonSelectionActions(gPlayerParty, gPartyMenu.slotId, ACTIONS_CANDY);
+    DisplaySelectionWindow(SELECTWINDOW_ACTIONS);
+    DisplayPartyMenuStdMessage(PARTY_MSG_DO_WHAT_WITH_MON);
+    gTasks[taskId].data[0] = 0xFF;
+    gTasks[taskId].func = Task_HandleSelectionMenuInput;
+}
+
+static void CursorCb_RareCandy(u8 taskId)
+{
+    UseCandyFromPartyMenu(taskId, ITEM_RARE_CANDY);
+}
+
+static void CursorCb_MaxCandy(u8 taskId)
+{
+    UseCandyFromPartyMenu(taskId, ITEM_MAX_CANDY);
+}
+
+// Back to the regular field party menu after a candy from the action menu led to
+// an evolution or to the "forget a move" screen.
+static void CB2_ReturnToPartyMenuAfterCandy(void)
+{
+    InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_MON, TRUE, PARTY_MSG_CHOOSE_MON, Task_HandleChooseMonInput, gPartyMenu.exitCallback);
 }
 
 static void CursorCb_Item(u8 taskId)
@@ -4404,6 +4463,8 @@ void CB2_ShowPartyMenuForItemUse(void)
     u8 msgId;
     TaskFunc task;
 
+    sCandyFromPartyMenu = FALSE; // item picked from the bag
+
     if (gMain.inBattle)
     {
         menuType = PARTY_MENU_TYPE_IN_BATTLE;
@@ -5115,7 +5176,7 @@ static void CB2_ShowSummaryScreenToForgetMove(void)
 
 static void CB2_ReturnToPartyMenuWhileLearningMove(void)
 {
-    if (IS_LEVEL_CANDY(gSpecialVar_ItemId) && gPartyMenu.menuType == PARTY_MENU_TYPE_FIELD && CheckBagHasItem(gSpecialVar_ItemId, 1))
+    if (!sCandyFromPartyMenu && IS_LEVEL_CANDY(gSpecialVar_ItemId) && gPartyMenu.menuType == PARTY_MENU_TYPE_FIELD && CheckBagHasItem(gSpecialVar_ItemId, 1))
         InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_USE_ITEM, TRUE, PARTY_MSG_NONE, Task_ReturnToPartyMenuWhileLearningMove, gPartyMenu.exitCallback);
     else
         InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_MON, TRUE, PARTY_MSG_NONE, Task_ReturnToPartyMenuWhileLearningMove, gPartyMenu.exitCallback);
@@ -5464,7 +5525,9 @@ static void PartyMenuTryEvolution(u8 taskId)
 static void PartyMenuBeginEvolution(u8 taskId, struct Pokemon *mon, u16 targetSpecies)
 {
     FreePartyPointers();
-    if (IS_LEVEL_CANDY(gSpecialVar_ItemId) && gPartyMenu.menuType == PARTY_MENU_TYPE_FIELD && CheckBagHasItem(gSpecialVar_ItemId, 1))
+    if (sCandyFromPartyMenu)
+        gCB2_AfterEvolution = CB2_ReturnToPartyMenuAfterCandy;
+    else if (IS_LEVEL_CANDY(gSpecialVar_ItemId) && gPartyMenu.menuType == PARTY_MENU_TYPE_FIELD && CheckBagHasItem(gSpecialVar_ItemId, 1))
         gCB2_AfterEvolution = CB2_ReturnToPartyMenuUsingRareCandy;
     else
         gCB2_AfterEvolution = gPartyMenu.exitCallback;

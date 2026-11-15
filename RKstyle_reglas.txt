@@ -13,20 +13,34 @@ Aviso:  todo compila sin errores, pero nada se ha probado jugando aun.
 --------------------------------------------------------------
 
 RKstyle es un modo de juego nuevo. Al empezar una partida nueva aparece
-el menu de desafios, que tiene 6 paginas. En la pagina 4 (Nuzlocke), la
-primera fila ahora tiene cinco valores:
+el menu de desafios, que tiene 6 paginas. RK se elige en la primera fila
+de la primera pagina, "GAMEMODE", que ahora tiene tres valores:
 
-    OFF / EASY / NORMAL / HARD / RK
+    RECOMMENDED / CUSTOM / RK
 
-Al mover el selector hasta RK, el juego deja preseleccionadas de una sola
-vez todas las opciones descritas en este documento, en todas las paginas.
+(Pulsando derecha desde RECOMMENDED aparece CUSTOM y despues RK.)
+
+Al elegir RK, el juego deja configuradas de una sola vez todas las
+opciones descritas en este documento, en las 6 paginas. Despues:
+
+- Para empezar ya: baja hasta NEXT en esa misma pagina y pulsa A. El
+  juego se salta las otras 5 paginas y arranca con todo configurado.
+- Para revisar o cambiar algo antes: pulsa R para pasar de pagina (L
+  para volver), ajusta lo que quieras y confirma en la ultima.
+
+RK tambien aparece en la pagina 4 (Nuzlocke), en la fila NUZLOCKE:
+OFF / EASY / NORMAL / HARD / RK. Es el mismo interruptor: elegir RK en
+cualquiera de los dos lugares activa el otro, y quitarlo en uno lo quita
+en el otro.
 
 - Los presets se aplican en el momento de elegir RK. Despues se puede
   cambiar cualquier opcion a mano antes de confirmar.
 - Las reglas marcadas como "EXCLUSIVA DE RK" no son opciones del menu:
   estan siempre activas en una partida RK y nunca en los otros modos.
-- En el selector se lee "RK" porque no cabe un texto mas largo. En la
+- En el menu se lee "RK" porque no cabe un texto mas largo. En la
   pantalla de resumen de opciones aparece como "RKSTYLE".
+- En la pagina 1, con RK elegido, las demas filas quedan bloqueadas en
+  ON (igual que con RECOMMENDED).
 - RK solo se puede elegir al crear la partida. Una partida ya empezada
   en otro modo no pasa a ser RK.
 
@@ -119,6 +133,11 @@ FIN DEL NUZLOCKE
     - Un huevo que eclosiona tambien cierra la zona donde nace (esto ya
       era asi en el juego original).
 
+    Repelente al inicio de la partida: hasta que el ayudante de Elm te
+    entrega las Ultra Balls, el repelente esta activo en todas partes y
+    no aparece ningun salvaje. Asi no te cruzas con Pokemon que todavia
+    no puedes capturar.
+
 3.6 La cana de pescar siempre pica
 
     Al lanzar la cana, siempre pica un Pokemon en el primer intento. Ya
@@ -209,6 +228,50 @@ FIN DEL NUZLOCKE
       mensaje de que no pueden escapar.
     - Tu si puedes seguir huyendo de los combates salvajes, y puedes
       usar Rugido o Remolino para terminar el combate tu mismo.
+
+3.11 Las Poke Balls se vuelven mas efectivas con cada intento
+
+    Dentro de un mismo combate, cada Poke Ball que falla duplica la
+    probabilidad de captura de la siguiente:
+
+      1er lanzamiento ... probabilidad normal
+      2do ............... x2
+      3ro ............... x4
+      4to ............... x8   (y asi sucesivamente)
+
+    Con un Pokemon muy dificil (Beldum, legendarios) y casi sin vida,
+    una Ultra Ball lo captura seguro como muy tarde al septimo intento.
+    Vale para cualquier tipo de Poke Ball y el contador vuelve a cero en
+    cada combate.
+
+3.12 Caramelos desde el menu de cada Pokemon
+
+    En el menu del equipo, al elegir un Pokemon (donde sale "Do what
+    with this PKMN?" con SUMMARY / SWITCH / ITEM / CANCEL), aparece una
+    opcion nueva: CANDY. Al elegirla se abre un menu pequeno con:
+
+        RARE CANDY   sube 1 nivel
+        MAX CANDY    sube hasta el tope de nivel
+        CANCEL       vuelve al menu anterior
+
+    Hacen lo mismo que usarlos desde la mochila, sin tener que abrirla.
+
+    - CANDY aparece siempre, tenga el Pokemon los movimientos de campo
+      que tenga en su lista (Vuelo, Destello, Surf, etc.).
+    - No aparece para un huevo.
+    - Desde las cajas del PC no se pueden usar: hay que sacar el Pokemon
+      al equipo.
+
+3.13 Descripcion de los ataques en combate
+
+    En la pantalla de elegir ataque, pulsar L (o START) muestra la
+    descripcion del ataque seleccionado. Pulsar L, START, A o B la
+    cierra. (START ya lo hacia en el juego original; RK no es necesario
+    para esto, funciona en todos los modos.)
+
+    Si en las opciones del juego tienes configurado que L funcione como
+    A, L elegira el ataque en vez de mostrar la descripcion; en ese
+    caso usa START.
 
 
 --------------------------------------------------------------
@@ -306,6 +369,22 @@ solo se cumple si se desactiva "Abilities" en el randomizer.
                                        cambian. Las 999 Ultra Balls del
                                        ayudante de Elm tampoco.
   Chaos ..................... OFF
+
+Sobre los objetos al azar (Items):
+- Todo lo que te regala un personaje sale al azar, igual que lo que
+  encuentras en Poke Balls en el suelo y los objetos ocultos.
+- Las MT tambien salen al azar, pero siempre son otra MT, y el juego
+  evita darte una que ya tengas.
+- NO cambian: los objetos clave necesarios para avanzar en la historia
+  y las MO (HM), que se entregan donde siempre.
+
+Sobre las MO (HM): se siguen consiguiendo en su lugar habitual y se
+desbloquean con la medalla correspondiente. Una vez que tienes la MO en
+la mochila puedes usarla en el mapa sin ensenarsela a ningun Pokemon:
+- Corte, Surf, Fuerza, Golpe Roca, Cascada, etc.: pulsa A frente al
+  obstaculo o al agua.
+- Vuelo y Destello: aparecen en el menu del primer Pokemon del equipo.
+Para usar esos movimientos en combate si hay que ensenarselos.
 
 
 --------------------------------------------------------------

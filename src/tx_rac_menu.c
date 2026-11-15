@@ -238,6 +238,7 @@ static int ProcessInput_Options_Three(int selection);
 static int ProcessInput_Options_Four(int selection);
 static int ProcessInput_Options_Five(int selection);
 static int ProcessInput_Nuzlocke_Mode(int selection);
+static int ProcessInput_Mode_Gamemode(int selection);
 static int ProcessInput_Options_Six(int selection);
 static int ProcessInput_Options_Eleven(int selection);
 static int ProcessInput_Options_OneTypeChallenge(int selection);
@@ -331,6 +332,11 @@ static void DrawChoices_Features_Shiny_Colors(int selection, int y);
 
 static void PrintCurrentSelections(void);
 
+// Values of the GAMEMODE row (first row of the first page)
+#define GAMEMODE_RECOMMENDED 0
+#define GAMEMODE_CUSTOM      1
+#define GAMEMODE_RKSTYLE     2
+
 // EWRAM vars
 EWRAM_DATA static struct OptionMenu *sOptions = NULL;
 
@@ -360,7 +366,7 @@ struct // MENU_MODE
     int (*processInput)(int selection);
 } static const sItemFunctionsMode[MENUITEM_MODE_COUNT] =
 {
-    [MENUITEM_MODE_CLASSIC_MODERN]        = {DrawChoices_Mode_Classic_Modern_Selector,       ProcessInput_Options_Two}, //ONLY TWO MODES. DRAWING AND BEHAVIOR. LETS FUCKING GO
+    [MENUITEM_MODE_CLASSIC_MODERN]        = {DrawChoices_Mode_Classic_Modern_Selector,       ProcessInput_Mode_Gamemode}, // RECOMMENDED / CUSTOM / RK
     //[MENUITEM_MODE_ALTERNATE_SPAWNS]      = {DrawChoices_Mode_AlternateSpawns,      ProcessInput_Options_Hardcoded},
     [MENUITEM_MODE_INFINITE_TMS]          = {DrawChoices_Mode_InfiniteTMs,          ProcessInput_Options_Two},
     [MENUITEM_MODE_SURVIVE_POISON]        = {DrawChoices_Mode_SurvivePoison,        ProcessInput_Options_Two},
@@ -778,6 +784,8 @@ static const u8 sText_Description_Save[]    = _("Save choices and continue...");
 static const u8 sText_Description_Mode_Gamemode_Classic[]         = _("Recommended settings.\n{COLOR 7}{COLOR 8}NOTE: All selections are PERMANENT.");
 static const u8 sText_Description_Mode_Gamemode_Modern[]          = _("Choose your own rules.\n{COLOR 7}{COLOR 8}NOTE: All selections are PERMANENT.");
 static const u8 sText_Description_Mode_Gamemode_Custom[]          = _("Choose your own rules.\n{COLOR 7}{COLOR 8}NOTE: All selections are PERMANENT.");
+static const u8 sText_Description_Mode_Gamemode_RKStyle[]         = _("RKSTYLE: every page is preset.\nPick NEXT below to start right away.");
+static const u8 sText_Description_Mode_Next_RKStyle[]             = _("Start the game with RKSTYLE rules.\nPress R to review the other pages.");
 //static const u8 sText_Description_Mode_AlternateSpawns_Vanilla[]        = _("Use VANILLA wild encounters.\nUnchanged from the original.");
 //static const u8 sText_Description_Mode_AlternateSpawns_Postgame[]       = _("VANILLA, but after becoming champion,\nall 423 {PKMN} will be available.");
 //static const u8 sText_Description_Mode_AlternateSpawns_Modern[]         = _("Use MODERN wild encounters.\nAll 423 {PKMN} will be available.");
@@ -811,7 +819,7 @@ static const u8 sText_Description_Mode_Next[]                     = _("Continue 
 
 static const u8 *const sOptionMenuItemDescriptionsMode[MENUITEM_MODE_COUNT][5] =
 {
-    [MENUITEM_MODE_CLASSIC_MODERN]        = {sText_Description_Mode_Gamemode_Classic,       sText_Description_Mode_Gamemode_Modern,       sText_Description_Mode_Gamemode_Custom,             sText_Empty,                                        sText_Empty},
+    [MENUITEM_MODE_CLASSIC_MODERN]        = {sText_Description_Mode_Gamemode_Classic,       sText_Description_Mode_Gamemode_Modern,       sText_Description_Mode_Gamemode_RKStyle,             sText_Empty,                                        sText_Empty},
     //[MENUITEM_MODE_ALTERNATE_SPAWNS]      = {sText_Description_Mode_AlternateSpawns_Vanilla,    sText_Description_Mode_AlternateSpawns_Modern,      sText_Description_Mode_AlternateSpawns_Postgame,                                         sText_Empty,                                        sText_Empty},
     [MENUITEM_MODE_INFINITE_TMS]          = {sText_Description_Mode_InfiniteTMs_Off,        sText_Description_Mode_InfiniteTMs_On,        sText_Empty,                                        sText_Empty,                                        sText_Empty},
     [MENUITEM_MODE_SURVIVE_POISON]        = {sText_Description_Mode_SurvivePoison_Off,      sText_Description_Mode_SurvivePoison_On,      sText_Empty,                                        sText_Empty,                                        sText_Empty},
@@ -1136,6 +1144,8 @@ static const u8 *const OptionTextDescription(void)
         if (!CheckConditions(menuItem) && sOptionMenuItemDescriptionsDisabledMode[menuItem] != sText_Empty)
             return sOptionMenuItemDescriptionsDisabledMode[menuItem];
         selection = sOptions->sel_mode[menuItem];  
+        if (menuItem == MENUITEM_MODE_NEXT && sOptions->sel_mode[MENUITEM_MODE_CLASSIC_MODERN] == GAMEMODE_RKSTYLE)
+            return sText_Description_Mode_Next_RKStyle;
         return sOptionMenuItemDescriptionsMode[menuItem][selection];
     case MENU_FEATURES:
         if (!CheckConditions(menuItem) && sOptionMenuItemDescriptionsDisabledFeatures[menuItem] != sText_Empty)
@@ -1667,7 +1677,8 @@ static void Task_OptionMenuProcessInput(u8 taskId)
     {
         if (sOptions->menuCursor[sOptions->submenu] == MenuItemCancel())
         {
-            if (sOptions->submenu == MENU_COUNT-1)
+            if (sOptions->submenu == MENU_COUNT-1
+             || (sOptions->submenu == MENU_MODE && sOptions->sel_mode[MENUITEM_MODE_CLASSIC_MODERN] == GAMEMODE_RKSTYLE)) // RKstyle: skip the other pages
                 gTasks[taskId].func = Task_RandomizerChallengesMenuSave;
             else
             {
@@ -2125,9 +2136,9 @@ static int ProcessInput_Options_Four(int selection)
 // so every option can still be changed by hand afterwards.
 static void ApplyRKStylePresets(void)
 {
-    // MENU_MODE: RECOMMENDED gamemode, which turns every row of that page ON
+    // MENU_MODE: RK gamemode, which (like RECOMMENDED) turns every row of that page ON
     // (rows are also set explicitly, in case that page is never drawn again)
-    sOptions->sel_mode[MENUITEM_MODE_CLASSIC_MODERN]         = 0;
+    sOptions->sel_mode[MENUITEM_MODE_CLASSIC_MODERN]         = GAMEMODE_RKSTYLE;
     sOptions->sel_mode[MENUITEM_MODE_MODERN_MOVES]           = 1;
     sOptions->sel_mode[MENUITEM_MODE_SYNCHRONIZE]            = 1;
     sOptions->sel_mode[MENUITEM_MODE_STURDY]                 = 1;
@@ -2188,6 +2199,7 @@ static void ApplyRKStylePresets(void)
     sOptions->sel_challenges[MENUITEM_CHALLENGES_MIRROR_THIEF]        = 0;
 
     // MENU_NUZLOCKE (0 = ON, 1 = OFF for these four rows)
+    sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_NUZLOCKE]       = 4; // RK
     sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_SPECIES_CLAUSE] = 0; // Species Clause ON: can't catch an evolution line twice
     sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_SHINY_CLAUSE]   = 0; // Shiny Clause ON
     sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_NICKNAMING]     = 0; // forced nicknames ON
@@ -2201,6 +2213,27 @@ static int ProcessInput_Nuzlocke_Mode(int selection)
 
     if (newSelection != selection && newSelection == 4)
         ApplyRKStylePresets();
+    // leaving RK here also leaves the RK gamemode of the first page
+    if (selection == 4 && newSelection != 4 && sOptions->sel_mode[MENUITEM_MODE_CLASSIC_MODERN] == GAMEMODE_RKSTYLE)
+        sOptions->sel_mode[MENUITEM_MODE_CLASSIC_MODERN] = GAMEMODE_CUSTOM;
+    return newSelection;
+}
+
+// GAMEMODE row of the first page: RECOMMENDED / CUSTOM / RK.
+// RK is the same switch as the RK value of the NUZLOCKE row; the two always move together.
+static int ProcessInput_Mode_Gamemode(int selection)
+{
+    int newSelection = XOptions_ProcessInput(3, selection);
+
+    if (newSelection != selection && newSelection == GAMEMODE_RKSTYLE)
+    {
+        ApplyRKStylePresets();
+    }
+    else if (selection == GAMEMODE_RKSTYLE && newSelection != GAMEMODE_RKSTYLE)
+    {
+        if (sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_NUZLOCKE] == 4)
+            sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_NUZLOCKE] = 0; // Nuzlocke OFF
+    }
     return newSelection;
 }
 
@@ -2377,18 +2410,25 @@ static void DrawChoices_Random_OffOn(int selection, int y, bool8 active)
 static const u8 sClassic[]  = _("RECOMMENDED");
 static const u8 sModern[]   = _("MODERN");
 static const u8 sCustom[]   = _("CUSTOM");
+static const u8 sText_Gamemode_RKStyle[] = _("RK");
 static const u8 *const sText_Mode_Strings[] = {sClassic,  sCustom};
 
 static void DrawChoices_Mode_Classic_Modern_Selector(int selection, int y)
 {
     bool8 active = CheckConditions(MENUITEM_MODE_CLASSIC_MODERN);
-    u8 styles[2] = {0};
-    styles[selection] = 1;
-
-    DrawOptionMenuChoice(sClassic, 74, y, styles[0], active);
-    DrawOptionMenuChoice(sCustom, GetStringRightAlignXOffset(1, sCustom, 198), y, styles[1], active);
+    if (selection == GAMEMODE_RECOMMENDED)
+    {
+        DrawOptionMenuChoice(sClassic, 74, y, 1, active);
+        DrawOptionMenuChoice(sCustom, GetStringRightAlignXOffset(1, sCustom, 198), y, 0, active);
+    }
+    else
+    {
+        // only two choices fit on the row: show CUSTOM and RK once past RECOMMENDED
+        DrawOptionMenuChoice(sCustom, 104, y, selection == GAMEMODE_CUSTOM, active);
+        DrawOptionMenuChoice(sText_Gamemode_RKStyle, GetStringRightAlignXOffset(1, sText_Gamemode_RKStyle, 198), y, selection == GAMEMODE_RKSTYLE, active);
+    }
     
-    if (selection == 0)
+    if (selection == GAMEMODE_RECOMMENDED || selection == GAMEMODE_RKSTYLE) // both lock every row of this page ON
     {
         //sOptions->sel_mode[MENUITEM_MODE_ALTERNATE_SPAWNS]          = tx_Mode_AlternateSpawns;
         //gSaveBlock1Ptr->tx_Mode_AlternateSpawns = 0;
