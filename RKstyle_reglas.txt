@@ -3,10 +3,8 @@
 ==============================================================
 
 Ultima actualizacion: 15/11/2026
-Estado: paginas 1, 2, 3, 4 y 5 del menu ya definidas.
+Estado: las 6 paginas del menu ya estan definidas.
         Regla de captura por zona y repelente automatico agregados.
-        Pagina 6 todavia sin decidir (usa los valores normales del
-        juego).
 Aviso:  todo compila sin errores, pero nada se ha probado jugando aun.
 
 
@@ -365,6 +363,26 @@ solo se cumple si se desactiva "Abilities" en el randomizer.
 
 
 --------------------------------------------------------------
+7c. PAGINA 6 DEL MENU - DESAFIOS
+--------------------------------------------------------------
+
+Toda la pagina queda en los valores normales del juego.
+
+  Pokecenter ........... SI      Puedes curar en los Centros Pokemon.
+  PC Heal .............. SI      Un Pokemon depositado en el PC sale
+                                 curado.
+  Expensive ............ x1      Precios normales en las tiendas.
+  Evo Limit ............ NINGUNO Sin limite: los Pokemon evolucionan
+                                 todas las veces que les corresponda,
+                                 siguiendo los niveles de la seccion 8.
+  One Type Challenge ... OFF     Puedes capturar y usar cualquier tipo.
+  Base Stat Equalizer .. OFF     Cada especie tiene sus estadisticas
+                                 base normales.
+  Mirror ............... OFF     Usas tu propio equipo en los combates.
+  Mirror Thief ......... OFF     No te quedas con equipos rivales.
+
+
+--------------------------------------------------------------
 8. EVOLUCIONES POR NIVEL (EXCLUSIVA DE RK)
 --------------------------------------------------------------
 
@@ -533,7 +551,4 @@ solo se cumple si se desactiva "Abilities" en el randomizer.
 9. PENDIENTE
 --------------------------------------------------------------
 
-- Pagina 6 (Desafios): sin definir. Hoy: Centros Pokemon disponibles,
-  el PC cura, precios normales, evoluciones sin limite, sin desafio de
-  un solo tipo, estadisticas base normales, sin modo espejo.
 - Probar todo en el juego con una partida nueva en modo RK.

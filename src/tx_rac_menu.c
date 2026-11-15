@@ -2177,6 +2177,16 @@ static void ApplyRKStylePresets(void)
     sOptions->sel_difficulty[MENUITEM_DIFFICULTY_LESS_ESCAPES]    = 0;
     sOptions->sel_difficulty[MENUITEM_DIFFICULTY_ESCAPE_ROPE_DIG] = 0; // Escape Rope and Dig work
 
+    // MENU_CHALLENGES: everything at its regular value
+    sOptions->sel_challenges[MENUITEM_DIFFICULTY_POKECENTER]          = 0; // Pokemon Centers usable
+    sOptions->sel_challenges[MENUITEM_CHALLENGES_PCHEAL]              = 0; // PC heals
+    sOptions->sel_challenges[MENUITEM_CHALLENGES_EXPENSIVE]           = 0; // x1 prices
+    sOptions->sel_challenges[MENUITEM_CHALLENGES_EVO_LIMIT]           = 0; // no evolution limit
+    sOptions->sel_challenges[MENUITEM_CHALLENGES_ONE_TYPE_CHALLENGE]  = TX_CHALLENGE_TYPE_OFF;
+    sOptions->sel_challenges[MENUITEM_CHALLENGES_BASE_STAT_EQUALIZER] = 0;
+    sOptions->sel_challenges[MENUITEM_CHALLENGES_MIRROR]              = 0;
+    sOptions->sel_challenges[MENUITEM_CHALLENGES_MIRROR_THIEF]        = 0;
+
     // MENU_NUZLOCKE (0 = ON, 1 = OFF for these four rows)
     sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_SPECIES_CLAUSE] = 0; // Species Clause ON: can't catch an evolution line twice
     sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_SHINY_CLAUSE]   = 0; // Shiny Clause ON
