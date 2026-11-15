@@ -232,6 +232,9 @@ static EWRAM_DATA u16 *sSlot2TilemapBuffer = 0; //
 EWRAM_DATA u8 gSelectedOrderFromParty[MAX_FRONTIER_PARTY_SIZE] = {0};
 static EWRAM_DATA u16 sPartyMenuItemId = 0;
 static EWRAM_DATA u16 sUnused = 0;
+static EWRAM_DATA u8 sMaxCandyTargetLevel = 0; // RKstyle Max Candy: level the mon was raised to
+
+#define IS_LEVEL_CANDY(item) ((item) == ITEM_RARE_CANDY || (item) == ITEM_MAX_CANDY)
 EWRAM_DATA u8 gBattlePartyCurrentOrder[PARTY_SIZE / 2] = {0}; // bits 0-3 are the current pos of Slot 1, 4-7 are Slot 2, and so on
 
 // IWRAM common
@@ -421,6 +424,9 @@ static void Task_DisplayLevelUpStatsPg2(u8);
 static void DisplayLevelUpStatsPg2(u8);
 static void Task_TryLearnNewMoves(u8);
 static void PartyMenuTryEvolution(u8);
+static void PartyMenuBeginEvolution(u8 taskId, struct Pokemon *mon, u16 targetSpecies);
+static void PartyMenuFinishedLevelMoves(u8 taskId);
+static void Task_TryLearnNewMovesNextLevel(u8 taskId);
 static void DisplayMonNeedsToReplaceMove(u8);
 static void DisplayMonLearnedMove(u8, u16);
 static void UseSacredAsh(u8);
@@ -5109,7 +5115,7 @@ static void CB2_ShowSummaryScreenToForgetMove(void)
 
 static void CB2_ReturnToPartyMenuWhileLearningMove(void)
 {
-    if (gSpecialVar_ItemId == ITEM_RARE_CANDY && gPartyMenu.menuType == PARTY_MENU_TYPE_FIELD && CheckBagHasItem(gSpecialVar_ItemId, 1))
+    if (IS_LEVEL_CANDY(gSpecialVar_ItemId) && gPartyMenu.menuType == PARTY_MENU_TYPE_FIELD && CheckBagHasItem(gSpecialVar_ItemId, 1))
         InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_USE_ITEM, TRUE, PARTY_MSG_NONE, Task_ReturnToPartyMenuWhileLearningMove, gPartyMenu.exitCallback);
     else
         InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_MON, TRUE, PARTY_MSG_NONE, Task_ReturnToPartyMenuWhileLearningMove, gPartyMenu.exitCallback);
@@ -5222,11 +5228,46 @@ void ItemUseCB_RareCandy(u8 taskId, TaskFunc task)
     u16 *itemPtr = &gSpecialVar_ItemId;
     bool8 cannotUseEffect;
 
-    if (GetMonData(mon, MON_DATA_LEVEL) < GetCurrentPartyLevelCap())
+    u8 level = GetMonData(mon, MON_DATA_LEVEL);
+    u8 levelCap = GetCurrentPartyLevelCap();
+
+    gLevelUpMoveLevelOverride = 0;
+    if (level < levelCap)
     {
         BufferMonStatsToTaskData(mon, arrayPtr);
-        cannotUseEffect = ExecuteTableBasedItemEffect_(gPartyMenu.slotId, *itemPtr, 0);
+        if (*itemPtr == ITEM_MAX_CANDY)
+        {
+            // Max Candy: jump straight to the level cap. The moves of every skipped
+            // level are offered afterwards, one level at a time.
+            u16 species = GetMonData(mon, MON_DATA_SPECIES);
+            u32 exp = gExperienceTables[gSpeciesInfo[species].growthRate][levelCap];
+
+            SetMonData(mon, MON_DATA_EXP, &exp);
+            CalculateMonStats(mon);
+            sMaxCandyTargetLevel = levelCap;
+            gLevelUpMoveLevelOverride = level + 1;
+            cannotUseEffect = FALSE;
+        }
+        else
+        {
+            cannotUseEffect = ExecuteTableBasedItemEffect_(gPartyMenu.slotId, *itemPtr, 0);
+        }
         BufferMonStatsToTaskData(mon, &ptr->data[NUM_STATS]);
+    }
+    else if (IsRKStyleActive())
+    {
+        // RKstyle: a Pokemon already at the level cap can still use a candy to
+        // trigger an evolution it qualifies for.
+        u16 targetSpecies = GetEvolutionTargetSpecies(mon, EVO_MODE_NORMAL, ITEM_NONE);
+
+        if (targetSpecies != SPECIES_NONE)
+        {
+            PlaySE(SE_SELECT);
+            gPartyMenuUseExitCallback = TRUE;
+            PartyMenuBeginEvolution(taskId, mon, targetSpecies);
+            return;
+        }
+        cannotUseEffect = TRUE;
     }
     else
     {
@@ -5245,7 +5286,8 @@ void ItemUseCB_RareCandy(u8 taskId, TaskFunc task)
         gPartyMenuUseExitCallback = TRUE;
         PlayFanfareByFanfareNum(FANFARE_LEVEL_UP);
         UpdateMonDisplayInfoAfterRareCandy(gPartyMenu.slotId, mon);
-        RemoveBagItem(gSpecialVar_ItemId, 1);
+        if (!IsRKStyleActive()) // RKstyle: candies are never used up
+            RemoveBagItem(gSpecialVar_ItemId, 1);
         GetMonNickname(mon, gStringVar1);
         ConvertIntToDecimalStringN(gStringVar2, GetMonData(mon, MON_DATA_LEVEL), STR_CONV_MODE_LEFT_ALIGN, 3);
         StringExpandPlaceholders(gStringVar4, gText_PkmnElevatedToLvVar2);
@@ -5319,7 +5361,7 @@ static void Task_TryLearnNewMoves(u8 taskId)
         switch (learnMove)
         {
         case 0: // No moves to learn
-            PartyMenuTryEvolution(taskId);
+            PartyMenuFinishedLevelMoves(taskId);
             break;
         case MON_HAS_MAX_MOVES:
             DisplayMonNeedsToReplaceMove(taskId);
@@ -5341,7 +5383,7 @@ static void Task_TryLearningNextMove(u8 taskId)
     switch (result)
     {
     case 0: // No moves to learn
-        PartyMenuTryEvolution(taskId);
+        PartyMenuFinishedLevelMoves(taskId);
         break;
     case MON_HAS_MAX_MOVES:
         DisplayMonNeedsToReplaceMove(taskId);
@@ -5350,6 +5392,43 @@ static void Task_TryLearningNextMove(u8 taskId)
         return;
     default:
         DisplayMonLearnedMove(taskId, result);
+        break;
+    }
+}
+
+// All moves of one level have been handled. With a Max Candy there may be more
+// skipped levels to go through before checking for evolution.
+static void PartyMenuFinishedLevelMoves(u8 taskId)
+{
+    if (gLevelUpMoveLevelOverride != 0 && gLevelUpMoveLevelOverride < sMaxCandyTargetLevel)
+    {
+        gLevelUpMoveLevelOverride++;
+        gTasks[taskId].func = Task_TryLearnNewMovesNextLevel;
+    }
+    else
+    {
+        gLevelUpMoveLevelOverride = 0;
+        PartyMenuTryEvolution(taskId);
+    }
+}
+
+static void Task_TryLearnNewMovesNextLevel(u8 taskId)
+{
+    u16 learnMove = MonTryLearningNewMove(&gPlayerParty[gPartyMenu.slotId], TRUE);
+
+    switch (learnMove)
+    {
+    case 0: // No moves to learn
+        PartyMenuFinishedLevelMoves(taskId);
+        break;
+    case MON_HAS_MAX_MOVES:
+        DisplayMonNeedsToReplaceMove(taskId);
+        break;
+    case MON_ALREADY_KNOWS_MOVE:
+        gTasks[taskId].func = Task_TryLearningNextMove;
+        break;
+    default:
+        DisplayMonLearnedMove(taskId, learnMove);
         break;
     }
 }
@@ -5371,13 +5450,7 @@ static void PartyMenuTryEvolution(u8 taskId)
 
     if (targetSpecies != SPECIES_NONE)
     {
-        FreePartyPointers();
-        if (gSpecialVar_ItemId == ITEM_RARE_CANDY && gPartyMenu.menuType == PARTY_MENU_TYPE_FIELD && CheckBagHasItem(gSpecialVar_ItemId, 1))
-            gCB2_AfterEvolution = CB2_ReturnToPartyMenuUsingRareCandy;
-        else
-            gCB2_AfterEvolution = gPartyMenu.exitCallback;
-        BeginEvolutionScene(mon, targetSpecies, TRUE, gPartyMenu.slotId);
-        DestroyTask(taskId);
+        PartyMenuBeginEvolution(taskId, mon, targetSpecies);
     }
     else
     {
@@ -5386,6 +5459,17 @@ static void PartyMenuTryEvolution(u8 taskId)
         else
             gTasks[taskId].func = Task_ClosePartyMenuAfterText;
     }
+}
+
+static void PartyMenuBeginEvolution(u8 taskId, struct Pokemon *mon, u16 targetSpecies)
+{
+    FreePartyPointers();
+    if (IS_LEVEL_CANDY(gSpecialVar_ItemId) && gPartyMenu.menuType == PARTY_MENU_TYPE_FIELD && CheckBagHasItem(gSpecialVar_ItemId, 1))
+        gCB2_AfterEvolution = CB2_ReturnToPartyMenuUsingRareCandy;
+    else
+        gCB2_AfterEvolution = gPartyMenu.exitCallback;
+    BeginEvolutionScene(mon, targetSpecies, TRUE, gPartyMenu.slotId);
+    DestroyTask(taskId);
 }
 
 static void DisplayMonNeedsToReplaceMove(u8 taskId)

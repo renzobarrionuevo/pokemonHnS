@@ -78,6 +78,7 @@ static u16 GiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move);
 static bool8 ShouldSkipFriendshipChange(void);
 
 EWRAM_DATA static u8 sLearningMoveTableID = 0;
+EWRAM_DATA u8 gLevelUpMoveLevelOverride = 0; // RKstyle Max Candy: learn the moves of this level instead of the mon's current one
 EWRAM_DATA u8 gPlayerPartyCount = 0;
 EWRAM_DATA u8 gEnemyPartyCount = 0;
 EWRAM_DATA struct Pokemon gPlayerParty[PARTY_SIZE] = {0};
@@ -6169,6 +6170,9 @@ u16 MonTryLearningNewMove(struct Pokemon *mon, bool8 firstMove)
     u32 retVal = MOVE_NONE;
     u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
     u8 level = GetMonData(mon, MON_DATA_LEVEL, NULL);
+
+    if (gLevelUpMoveLevelOverride != 0)
+        level = gLevelUpMoveLevelOverride;
 
     // since you can learn more than one move per level
     // the game needs to know whether you decided to

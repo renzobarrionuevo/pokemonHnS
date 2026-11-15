@@ -323,6 +323,29 @@ u8 NuzlockeFlagGet(u16 mapsec) // @Kurausukun
     return 1;
 }
 
+// RKstyle: fainted Pokemon are stored in the last PC box. Falls back to the regular
+// "first free slot" behaviour if that box is full.
+static void NuzlockeSendFaintedMonToPC(struct Pokemon *mon)
+{
+    if (IsRKStyleActive())
+    {
+        u8 boxPos;
+
+        for (boxPos = 0; boxPos < IN_BOX_COUNT; boxPos++)
+        {
+            struct BoxPokemon *slot = GetBoxedMonPtr(TOTAL_BOXES_COUNT - 1, boxPos);
+
+            if (GetBoxMonData(slot, MON_DATA_SPECIES, NULL) == SPECIES_NONE)
+            {
+                MonRestorePP(mon);
+                CopyMon(slot, &mon->box, sizeof(mon->box));
+                return;
+            }
+        }
+    }
+    CopyMonToPC(mon);
+}
+
 void NuzlockeDeletePartyMon(u8 position)
 {
     if (!gSaveBlock1Ptr->tx_Nuzlocke_Deletion)
@@ -331,7 +354,7 @@ void NuzlockeDeletePartyMon(u8 position)
         u8 val[1] = {TRUE};
         
         SetMonData(pokemon, MON_DATA_NUZLOCKE_RIBBON, val);
-        CopyMonToPC(&gPlayerParty[position]);
+        NuzlockeSendFaintedMonToPC(&gPlayerParty[position]);
     }
     PurgeMonOrBoxMon(TOTAL_BOXES_COUNT, position);
 }
@@ -342,7 +365,7 @@ void NuzlockeDeletePartyMonOption(u8 position)
     u8 val[1] = {TRUE};
         
     SetMonData(pokemon, MON_DATA_NUZLOCKE_RIBBON, val);
-    CopyMonToPC(&gPlayerParty[position]);
+    NuzlockeSendFaintedMonToPC(&gPlayerParty[position]);
     PurgeMonOrBoxMon(TOTAL_BOXES_COUNT, position);
 }
 

@@ -3,7 +3,7 @@
 ==============================================================
 
 Ultima actualizacion: 15/11/2026
-Estado: paginas 1, 2 y 3 del menu ya definidas. Pagina 4 casi completa.
+Estado: paginas 1, 2, 3 y 4 del menu ya definidas.
         Regla de captura por zona y repelente automatico agregados.
         Paginas 5 y 6 todavia sin decidir (usan los valores normales
         del juego).
@@ -132,6 +132,70 @@ FIN DEL NUZLOCKE
     - En una zona cerrada (seccion 3.5) no pica nada, como cualquier
       otro encuentro.
 
+3.7 Caramelos en la mochila desde el inicio
+
+    La partida empieza con dos objetos en la mochila (bolsillo de
+    objetos), 999 de cada uno. En RK no se gastan al usarlos, asi que
+    son infinitos.
+
+    RARE CANDY (Caramelo Raro)
+      Sube 1 nivel al Pokemon elegido.
+
+    MAX CANDY (objeto nuevo)
+      Sube al Pokemon elegido de una sola vez hasta el tope de nivel
+      actual (seccion 3.8).
+      - Despues de subir, el juego ofrece uno por uno los movimientos
+        de todos los niveles que se salto, como si hubiera subido de a
+        un nivel.
+      - Al terminar, si le corresponde evolucionar, evoluciona.
+      - Los movimientos ofrecidos son los de la especie que tenia antes
+        de usar el caramelo. Si evoluciona al final, no se repasan los
+        movimientos que la forma evolucionada habria aprendido en los
+        niveles saltados.
+
+    Ninguno de los dos puede pasar el tope de nivel. Si el Pokemon ya
+    esta en el tope, el caramelo no tiene efecto, salvo un caso: si le
+    corresponde evolucionar, usar cualquiera de los dos caramelos
+    dispara la evolucion. Sirve, por ejemplo, para un Pokemon que
+    evoluciona dos veces seguidas: el Max Candy lo sube al tope y lo
+    evoluciona una vez; usarlo de nuevo lo evoluciona la segunda.
+
+3.8 Tope de nivel segun las medallas
+
+    Ningun Pokemon tuyo puede superar un nivel maximo que depende de
+    cuantas medallas tienes. Para subir el tope hay que ganar gimnasios.
+    El tope es el nivel del Pokemon mas fuerte del proximo lider.
+
+      Medallas   Tope        Medallas   Tope
+         0        11            5        36
+         1        16            6        38
+         2        21            7        45
+         3        25            8        56
+         4        31
+
+      Despues de vencer a la Liga Pokemon ......... 70
+      Despues de vencer a la Liga de Kanto ........ 100 (sin tope)
+
+    - Vale para los caramelos y tambien para la experiencia de los
+      combates: un Pokemon en el tope deja de ganar experiencia.
+    - Afecta a las evoluciones por nivel (seccion 8): un Pokemon que
+      evoluciona al 50 no puede hacerlo hasta tener las 8 medallas.
+    - Es la opcion "Level Cap" de la pagina 5 del menu, que RK deja en
+      NORMAL. Se puede cambiar a mano (OFF la quita; HARD usa topes mas
+      bajos).
+
+3.9 Los Pokemon debilitados van a la ultima caja del PC
+
+    Cuando un Pokemon se debilita, al terminar el combate sale solo del
+    equipo y queda guardado en la ultima caja del PC (la numero 15), que
+    funciona como cementerio.
+
+    - Queda marcado como muerto: se puede ver pero no se puede volver a
+      usar.
+    - Si llevaba un objeto equipado, el objeto vuelve a tu mochila.
+    - Si la ultima caja se llena (30 Pokemon), los siguientes van al
+      primer hueco libre de las demas cajas.
+
 
 --------------------------------------------------------------
 4. PAGINA 1 DEL MENU - MODO
@@ -246,12 +310,13 @@ solo se cumple si se desactiva "Abilities" en el randomizer.
                                  tampoco shinies.
   Nicknaming ........ ON         Es obligatorio ponerle apodo a cada
                                  Pokemon capturado.
-  Deletion .......... CEMENTERIO Los debilitados van al PC y no se pueden
-                                 recuperar. (Valor normal del juego;
-                                 falta confirmar si se prefiere que se
-                                 liberen.)
-  Rare Candy ........ ON         Hay un Caramelo Raro infinito en el PC
-                                 desde el inicio.
+  Deletion .......... CEMENTERIO Los debilitados se guardan en la ultima
+                                 caja del PC (seccion 3.9) en vez de
+                                 liberarse.
+  Rare Candy ........ OFF        Esta opcion pone una caja de Caramelos
+                                 Raros en el PC de casa. RK no la usa
+                                 porque ya da los caramelos en la mochila
+                                 (seccion 3.7).
 
 
 --------------------------------------------------------------
@@ -423,9 +488,8 @@ solo se cumple si se desactiva "Abilities" en el randomizer.
 9. PENDIENTE
 --------------------------------------------------------------
 
-- Pagina 4: confirmar si los debilitados van al PC (actual) o se liberan.
-- Pagina 5 (Dificultad): sin definir. Hoy: equipo de 6, sin limite de
-  nivel, experiencia normal, objetos permitidos para ti y para los
+- Pagina 5 (Dificultad): solo esta definido el tope de nivel (NORMAL).
+  El resto sin definir. Hoy: equipo de 6, experiencia normal, objetos permitidos para ti y para los
   rivales, IVs y EVs normales, huir normal, Cuerda Huida y Excavar
   funcionan.
 - Pagina 6 (Desafios): sin definir. Hoy: Centros Pokemon disponibles,

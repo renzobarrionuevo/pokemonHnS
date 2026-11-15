@@ -231,8 +231,12 @@ void NewGameInitData(void)
     ResetFanClub();
     ResetLotteryCorner();
     WarpToTruck();
-    if (IsRKStyleActive()) // RKstyle: start with max money (MAX_MONEY in money.c)
-        SetMoney(&gSaveBlock1Ptr->money, 9999999);
+    if (IsRKStyleActive())
+    {
+        SetMoney(&gSaveBlock1Ptr->money, 9999999); // max money (MAX_MONEY in money.c)
+        AddBagItem(ITEM_RARE_CANDY, MAX_BAG_ITEM_CAPACITY); // never used up in RKstyle
+        AddBagItem(ITEM_MAX_CANDY, MAX_BAG_ITEM_CAPACITY);
+    }
     RunScriptImmediately(EventScript_ResetAllMapFlags);
     ResetMiniGamesRecords();
     InitUnionRoomChatRegisteredTexts();

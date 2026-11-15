@@ -272,6 +272,7 @@
 #define ITEM_RADIO 239
 #define ITEM_0F0 240
 #define ITEM_0F1 241
+#define ITEM_MAX_CANDY ITEM_0F1 // RKstyle: raises a Pokemon straight to the current level cap
 #define ITEM_0F2 242
 #define ITEM_0F3 243
 #define ITEM_0F4 244

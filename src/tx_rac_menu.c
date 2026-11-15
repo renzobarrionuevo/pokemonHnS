@@ -2164,11 +2164,15 @@ static void ApplyRKStylePresets(void)
     sOptions->sel_randomizer[MENUITEM_RANDOM_ITEMS]                   = 1;
     sOptions->sel_randomizer[MENUITEM_RANDOM_CHAOS]                   = 0;
 
+    // MENU_DIFFICULTY
+    sOptions->sel_difficulty[MENUITEM_DIFFICULTY_LEVEL_CAP]  = 1; // level cap = next gym's highest level
+
     // MENU_NUZLOCKE (0 = ON, 1 = OFF for these four rows)
     sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_SPECIES_CLAUSE] = 0; // Species Clause ON: can't catch an evolution line twice
     sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_SHINY_CLAUSE]   = 0; // Shiny Clause ON
     sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_NICKNAMING]     = 0; // forced nicknames ON
-    sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_RARE_CANDY]     = 0; // infinite Rare Candy ON
+    sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_DELETION]       = 0; // fainted Pokemon are kept in the PC (last box)
+    sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_RARE_CANDY]     = 1; // no Rare Candy box in the PC: RK puts the candies in the bag
 }
 
 static int ProcessInput_Nuzlocke_Mode(int selection)
