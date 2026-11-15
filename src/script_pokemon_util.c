@@ -63,6 +63,42 @@ void HealPlayerParty(void)
     }
 }
 
+// Same as HealPlayerParty (full HP, full PP, status cured), but leaves fainted Pokemon untouched.
+void HealPlayerPartyExceptFainted(void)
+{
+    u8 i, j;
+    u8 ppBonuses;
+    u8 arg[4];
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        u16 maxHP;
+
+        if (!GetMonData(&gPlayerParty[i], MON_DATA_SANITY_HAS_SPECIES)
+         || GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG)
+         || GetMonData(&gPlayerParty[i], MON_DATA_HP) == 0)
+            continue;
+
+        maxHP = GetMonData(&gPlayerParty[i], MON_DATA_MAX_HP);
+        arg[0] = maxHP;
+        arg[1] = maxHP >> 8;
+        SetMonData(&gPlayerParty[i], MON_DATA_HP, arg);
+        ppBonuses = GetMonData(&gPlayerParty[i], MON_DATA_PP_BONUSES);
+
+        for (j = 0; j < MAX_MON_MOVES; j++)
+        {
+            arg[0] = CalculatePPWithBonus(GetMonData(&gPlayerParty[i], MON_DATA_MOVE1 + j), ppBonuses, j);
+            SetMonData(&gPlayerParty[i], MON_DATA_PP1 + j, arg);
+        }
+
+        arg[0] = 0;
+        arg[1] = 0;
+        arg[2] = 0;
+        arg[3] = 0;
+        SetMonData(&gPlayerParty[i], MON_DATA_STATUS, arg);
+    }
+}
+
 u8 ScriptGiveMon(u16 species, u8 level, u16 item, u32 unused1, u32 unused2, u8 unused3)
 {
     u16 nationalDexNum;

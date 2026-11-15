@@ -237,6 +237,7 @@ static int ProcessInput_Options_Two(int selection);
 static int ProcessInput_Options_Three(int selection);
 static int ProcessInput_Options_Four(int selection);
 static int ProcessInput_Options_Five(int selection);
+static int ProcessInput_Nuzlocke_Mode(int selection);
 static int ProcessInput_Options_Six(int selection);
 static int ProcessInput_Options_Eleven(int selection);
 static int ProcessInput_Options_OneTypeChallenge(int selection);
@@ -424,7 +425,7 @@ struct // MENU_NUZLOCKE
     int (*processInput)(int selection);
 } static const sItemFunctionsNuzlocke[MENUITEM_NUZLOCKE_COUNT] =
 {
-    [MENUITEM_NUZLOCKE_NUZLOCKE]        = {DrawChoices_Challenges_Nuzlocke,     ProcessInput_Options_Four},
+    [MENUITEM_NUZLOCKE_NUZLOCKE]        = {DrawChoices_Challenges_Nuzlocke,     ProcessInput_Nuzlocke_Mode},
     [MENUITEM_NUZLOCKE_SPECIES_CLAUSE]  = {DrawChoices_Nuzlocke_SpeciesClause,  ProcessInput_Options_Two},
     [MENUITEM_NUZLOCKE_SHINY_CLAUSE]    = {DrawChoices_Nuzlocke_ShinyClause,    ProcessInput_Options_Two},
     [MENUITEM_NUZLOCKE_NICKNAMING]      = {DrawChoices_Nuzlocke_Nicknaming,     ProcessInput_Options_Two},
@@ -915,6 +916,7 @@ static const u8 sText_Description_Nuzlocke_Base[]               = _("Nuzlocke mo
 static const u8 sText_Description_Nuzlocke_Easy[]               = _("Fainted {PKMN} can't be used anymore!\nNo more rules are enforced.");
 static const u8 sText_Description_Nuzlocke_Normal[]             = _("One catch per route! Fainted POKéMON\ncan't be used anymore.");
 static const u8 sText_Description_Nuzlocke_Hard[]               = _("Same rules as NORMAL but also\n{COLOR 7}{COLOR 8}deletes SAVE on battle loss!");
+static const u8 sText_Description_Nuzlocke_RKStyle[]            = _("RKSTYLE: one catch per zone (any {PKMN}),\nfull heal after every battle.");
 static const u8 sText_Description_Nuzlocke_SpeciesClause_Off[]  = _("The player always has to catch the\nfirst POKéMON per route.");
 static const u8 sText_Description_Nuzlocke_SpeciesClause_On[]   = _("Only not prior caught POKéMON count\nas first encounter. {COLOR 7}{COLOR 8}RECOMMENDED!");
 static const u8 sText_Description_Nuzlocke_ShinyClause_Off[]    = _("The player can only catch a shiny\nPOKéMON if it's the first encounter.");
@@ -926,9 +928,9 @@ static const u8 sText_Description_Nuzlocke_Deletion_Deletion[]  = _("Fainted POK
 static const u8 sText_Description_Nuzlocke_RareCandy_On[]       = _("Infinite Rare Candy will be in the\n player's PC at game start.");
 static const u8 sText_Description_Nuzlocke_RareCandy_Off[]       = _("Player will not have access to\n Infinite Rare Candy.");
 static const u8 sText_Description_Nuzlocke_Next[]               = _("Continue to difficulty options.");
-static const u8 *const sOptionMenuItemDescriptionsNuzlocke[MENUITEM_NUZLOCKE_COUNT][4] =
+static const u8 *const sOptionMenuItemDescriptionsNuzlocke[MENUITEM_NUZLOCKE_COUNT][5] =
 {
-    [MENUITEM_NUZLOCKE_NUZLOCKE]            = {sText_Description_Nuzlocke_Base,                 sText_Description_Nuzlocke_Easy,                    sText_Description_Nuzlocke_Normal,  sText_Description_Nuzlocke_Hard},
+    [MENUITEM_NUZLOCKE_NUZLOCKE]            = {sText_Description_Nuzlocke_Base,                 sText_Description_Nuzlocke_Easy,                    sText_Description_Nuzlocke_Normal,  sText_Description_Nuzlocke_Hard,    sText_Description_Nuzlocke_RKStyle},
     [MENUITEM_NUZLOCKE_SPECIES_CLAUSE]      = {sText_Description_Nuzlocke_SpeciesClause_On,     sText_Description_Nuzlocke_SpeciesClause_Off,       sText_Empty,                        sText_Empty},
     [MENUITEM_NUZLOCKE_SHINY_CLAUSE]        = {sText_Description_Nuzlocke_ShinyClause_On,       sText_Description_Nuzlocke_ShinyClause_Off,         sText_Empty,                        sText_Empty},
     [MENUITEM_NUZLOCKE_NICKNAMING]          = {sText_Description_Nuzlocke_Nicknaming_On,        sText_Description_Nuzlocke_Nicknaming_Off,          sText_Empty,                        sText_Empty},
@@ -1486,6 +1488,7 @@ void CB2_InitTxRandomizerChallengesMenu(void)
 
         gSaveBlock1Ptr->tx_Challenges_Nuzlocke              = TX_NUZLOCKE_NUZLOCKE;
         gSaveBlock1Ptr->tx_Challenges_NuzlockeHardcore      = TX_NUZLOCKE_NUZLOCKE_HARDCORE;
+        gSaveBlock1Ptr->tx_Nuzlocke_RKStyle                 = FALSE;
         gSaveBlock1Ptr->tx_Nuzlocke_SpeciesClause           = TX_NUZLOCKE_SPECIES_CLAUSE;
         gSaveBlock1Ptr->tx_Nuzlocke_ShinyClause             = TX_NUZLOCKE_SHINY_CLAUSE;
         gSaveBlock1Ptr->tx_Nuzlocke_Nicknaming              = TX_NUZLOCKE_NICKNAMING;
@@ -1559,7 +1562,9 @@ void CB2_InitTxRandomizerChallengesMenu(void)
         sOptions->sel_randomizer[MENUITEM_RANDOM_CHAOS]                      = gSaveBlock1Ptr->tx_Random_Chaos;
 
         // MENU_NUZLOCKE
-        if (gSaveBlock1Ptr->tx_Challenges_Nuzlocke && gSaveBlock1Ptr->tx_Challenges_NuzlockeHardcore)
+        if (gSaveBlock1Ptr->tx_Challenges_Nuzlocke && gSaveBlock1Ptr->tx_Nuzlocke_RKStyle)
+            sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_NUZLOCKE] = 4;
+        else if (gSaveBlock1Ptr->tx_Challenges_Nuzlocke && gSaveBlock1Ptr->tx_Challenges_NuzlockeHardcore)
             sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_NUZLOCKE] = 3;
         else if (gSaveBlock1Ptr->tx_Challenges_Nuzlocke)
             sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_NUZLOCKE] = 2;
@@ -1954,7 +1959,13 @@ void SaveData_TxRandomizerAndChallenges(void)
         gSaveBlock1Ptr->tx_Challenges_Nuzlocke          = TRUE;
         gSaveBlock1Ptr->tx_Challenges_NuzlockeHardcore  = TRUE;
         break;
+    case 4: // RKstyle: NORMAL Nuzlocke rules + RK-only extras
+        gSaveBlock1Ptr->tx_Nuzlocke_EasyMode           = FALSE;
+        gSaveBlock1Ptr->tx_Challenges_Nuzlocke          = TRUE;
+        gSaveBlock1Ptr->tx_Challenges_NuzlockeHardcore  = FALSE;
+        break;
     }
+    gSaveBlock1Ptr->tx_Nuzlocke_RKStyle = (sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_NUZLOCKE] == 4);
     if (gSaveBlock1Ptr->tx_Nuzlocke_EasyMode)
     {
         gSaveBlock1Ptr->tx_Nuzlocke_RareCandy        = !sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_RARE_CANDY];
@@ -2108,6 +2119,65 @@ static int ProcessInput_Options_Three(int selection)
 static int ProcessInput_Options_Four(int selection)
 {
     return XOptions_ProcessInput(4, selection);
+}
+
+// RKstyle presets. Applied once, when the player moves the NUZLOCKE selector onto RK,
+// so every option can still be changed by hand afterwards.
+static void ApplyRKStylePresets(void)
+{
+    // MENU_MODE: RECOMMENDED gamemode, which turns every row of that page ON
+    // (rows are also set explicitly, in case that page is never drawn again)
+    sOptions->sel_mode[MENUITEM_MODE_CLASSIC_MODERN]         = 0;
+    sOptions->sel_mode[MENUITEM_MODE_MODERN_MOVES]           = 1;
+    sOptions->sel_mode[MENUITEM_MODE_SYNCHRONIZE]            = 1;
+    sOptions->sel_mode[MENUITEM_MODE_STURDY]                 = 1;
+    sOptions->sel_mode[MENUITEM_MODE_NEW_CITRUS]             = 1;
+    sOptions->sel_mode[MENUITEM_MODE_FAIRY_TYPES]            = 1;
+    sOptions->sel_mode[MENUITEM_MODE_LEGENDARY_ABILITIES]    = 1;
+    sOptions->sel_mode[MENUITEM_MODE_INFINITE_TMS]           = 1;
+    sOptions->sel_mode[MENUITEM_MODE_MINTS]                  = 1;
+    sOptions->sel_mode[MENUITEM_MODE_SURVIVE_POISON]         = 1;
+    FlagClear(FLAG_FINITE_TMS);
+    FlagSet(FLAG_MINTS_ENABLED);
+
+    // MENU_FEATURES
+    sOptions->sel_features[MENUITEM_FEATURES_RTC_TYPE]       = 1; // fake RTC (1h real = 1 day in-game)
+    sOptions->sel_features[MENUITEM_FEATURES_SHINY_CHANCE]   = 4; // 1/512
+    sOptions->sel_features[MENUITEM_FEATURES_SHINY_COLOR]    = 0; // original shiny palettes
+    sOptions->sel_features[MENUITEM_FEATURES_ITEM_DROP]      = 0; // wild item drop OFF
+    sOptions->sel_features[MENUITEM_FEATURES_FRONTIER_BANS]  = 0; // legendaries banned in the Frontier
+
+    // MENU_RANDOMIZER
+    sOptions->sel_randomizer[MENUITEM_RANDOM_OFF_ON]                  = 1; // randomizer ON
+    sOptions->sel_randomizer[MENUITEM_RANDOM_STARTER]                 = 1;
+    sOptions->sel_randomizer[MENUITEM_RANDOM_WILD_PKMN]               = 1;
+    sOptions->sel_randomizer[MENUITEM_RANDOM_TRAINER]                 = 1;
+    sOptions->sel_randomizer[MENUITEM_RANDOM_STATIC]                  = 1;
+    sOptions->sel_randomizer[MENUITEM_RANDOM_SIMILAR_EVOLUTION_LEVEL] = 0; // 0 = replacements of similar evo stage
+    sOptions->sel_randomizer[MENUITEM_RANDOM_INCLUDE_LEGENDARIES]     = 1;
+    sOptions->sel_randomizer[MENUITEM_RANDOM_TYPE]                    = 0;
+    sOptions->sel_randomizer[MENUITEM_RANDOM_MOVES]                   = 1;
+    sOptions->sel_randomizer[MENUITEM_RANDOM_ABILITIES]               = 1;
+    sOptions->sel_randomizer[MENUITEM_RANDOM_EVOLUTIONS]              = 0; // evolution lines unchanged
+    sOptions->sel_randomizer[MENUITEM_RANDOM_EVOLUTIONS_METHODS]      = 0;
+    sOptions->sel_randomizer[MENUITEM_RANDOM_TYPE_EFFEC]              = 0;
+    sOptions->sel_randomizer[MENUITEM_RANDOM_ITEMS]                   = 1;
+    sOptions->sel_randomizer[MENUITEM_RANDOM_CHAOS]                   = 0;
+
+    // MENU_NUZLOCKE (0 = ON, 1 = OFF for these four rows)
+    sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_SPECIES_CLAUSE] = 0; // Species Clause ON: can't catch an evolution line twice
+    sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_SHINY_CLAUSE]   = 0; // Shiny Clause ON
+    sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_NICKNAMING]     = 0; // forced nicknames ON
+    sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_RARE_CANDY]     = 0; // infinite Rare Candy ON
+}
+
+static int ProcessInput_Nuzlocke_Mode(int selection)
+{
+    int newSelection = XOptions_ProcessInput(5, selection);
+
+    if (newSelection != selection && newSelection == 4)
+        ApplyRKStylePresets();
+    return newSelection;
 }
 
 static int ProcessInput_Options_Five(int selection)
@@ -2441,12 +2511,13 @@ static void DrawChoices_Nuzlocke_OnOff(int selection, int y, bool8 active)
 static const u8 sText_Challenges_Nuzlocke_Easy[]        = _("EASY");
 static const u8 sText_Challenges_Nuzlocke_Normal[]      = _("NORMAL");
 static const u8 sText_Challenges_Nuzlocke_Hardcore[]    = _("HARD");
-static const u8 *const sText_Nuzlocke_Strings[] = {sText_Off, sText_Challenges_Nuzlocke_Easy, sText_Challenges_Nuzlocke_Normal, sText_Challenges_Nuzlocke_Hardcore};
+static const u8 sText_Challenges_Nuzlocke_RKStyle[]     = _("RK");
+static const u8 *const sText_Nuzlocke_Strings[] = {sText_Off, sText_Challenges_Nuzlocke_Easy, sText_Challenges_Nuzlocke_Normal, sText_Challenges_Nuzlocke_Hardcore, sText_Challenges_Nuzlocke_RKStyle};
 
 static void DrawChoices_Challenges_Nuzlocke(int selection, int y)
 {
     bool8 active = CheckConditions(MENUITEM_NUZLOCKE_NUZLOCKE);
-    DrawChoices_Options_Four(sText_Nuzlocke_Strings, selection, y, active);
+    DrawChoices_Options_Five(sText_Nuzlocke_Strings, selection, y, active);
 
     if (selection == 0)
     {

@@ -146,6 +146,9 @@ gSpecials::
 	def_special GetMaxPartySize 					@ tx_randomizer_and_challenges
 	def_special IsPokecenterChallengeActivated 	@ tx_randomizer_and_challenges
 	def_special IsNuzlockeNicknamingActive		@ tx_randomizer_and_challenges
+	def_special IsRKStyleActive
+	def_special GiveRKStyleUltraBalls
+	def_special GetRKStyleRandomItem
 	def_special IsRandomItemsActivated 			@ tx_randomizer_and_challenges
 	def_special RandomItem						@ tx_randomizer_and_challenges
 	def_special RandomItemHidden				@ tx_randomizer_and_challenges

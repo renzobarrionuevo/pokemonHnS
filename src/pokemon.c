@@ -9174,6 +9174,123 @@ u8 GetNatureFromPersonality(u32 personality)
     return personality % NUM_NATURES;
 }
 
+// RKstyle: level at which a Pokemon whose evolution normally needs an item, friendship,
+// a move, beauty, a location or a trade evolves by simply levelling up.
+static u8 GetRKStyleEvolutionLevel(u16 species)
+{
+    switch (species)
+    {
+    // baby Pokemon
+    case SPECIES_PICHU:
+    case SPECIES_CLEFFA:
+    case SPECIES_IGGLYBUFF:
+    case SPECIES_TOGEPI:
+    case SPECIES_AZURILL:
+    case SPECIES_BUDEW:
+    case SPECIES_CHINGLING:
+    case SPECIES_HAPPINY:
+    case SPECIES_MANTYKE:
+    case SPECIES_MIME_JR:
+    case SPECIES_MUNCHLAX:
+    case SPECIES_BONSLY:
+        return 15;
+    case SPECIES_SUNKERN:
+        return 20;
+    case SPECIES_EEVEE:
+    case SPECIES_PORYGON:
+    case SPECIES_SKITTY:
+        return 25;
+    // second-stage Pokemon
+    case SPECIES_NIDORINA:
+    case SPECIES_NIDORINO:
+    case SPECIES_GLOOM:
+    case SPECIES_POLIWHIRL:
+    case SPECIES_WEEPINBELL:
+    case SPECIES_GOLBAT:
+    case SPECIES_LOMBRE:
+    case SPECIES_NUZLEAF:
+        return 36;
+    case SPECIES_CHANSEY:
+    case SPECIES_MAGNETON:
+    case SPECIES_ELECTABUZZ:
+    case SPECIES_MAGMAR:
+    case SPECIES_PORYGON2:
+    case SPECIES_SEADRA:
+        return 40;
+    case SPECIES_URSARING:
+        return 42;
+    case SPECIES_PILOSWINE:
+    case SPECIES_DUSCLOPS:
+        return 45;
+    case SPECIES_RHYDON:
+        return 50;
+    default:
+        return 30;
+    }
+}
+
+// RKstyle: every Pokemon can evolve by level. Used only when no regular evolution
+// triggered on this level-up, so the original methods (stones, held items...) still work.
+// With several possible targets (Eevee, Gloom...) each individual Pokemon always gets
+// the same one, picked from its personality value.
+static u16 GetRKStyleLevelEvolution(u16 species, u8 level, u32 personality)
+{
+    u16 candidates[EVOS_PER_MON];
+    u8 count = 0;
+    u8 i, j;
+
+    for (i = 0; i < EVOS_PER_MON; i++)
+    {
+        u16 target = gEvolutionTable[species][i].targetSpecies;
+        u8 requiredLevel;
+
+        if (target == SPECIES_NONE)
+            continue;
+
+        switch (gEvolutionTable[species][i].method)
+        {
+        case EVO_FRIENDSHIP:
+        case EVO_FRIENDSHIP_DAY:
+        case EVO_FRIENDSHIP_NIGHT:
+        case EVO_TRADE:
+        case EVO_TRADE_ITEM:
+        case EVO_ITEM:
+        case EVO_ITEM_HOLD:
+        case EVO_ITEM_HOLD_DAY:
+        case EVO_ITEM_HOLD_NIGHT:
+        case EVO_MOVE:
+        case EVO_MOVE_TYPE:
+        case EVO_BEAUTY:
+        case EVO_LEVEL_LOCATION:
+            requiredLevel = GetRKStyleEvolutionLevel(species);
+            break;
+        case EVO_LEVEL_NIGHT:
+        case EVO_LEVEL_DAY:
+            requiredLevel = gEvolutionTable[species][i].param; // same level, any time of day
+            break;
+        default:
+            // This species already evolves by plain level (e.g. Slowpoke -> Slowbro):
+            // leave it to the regular rules, so its level evolution is never pre-empted.
+            return SPECIES_NONE;
+        }
+
+        if (level < requiredLevel)
+            continue;
+
+        for (j = 0; j < count; j++)
+        {
+            if (candidates[j] == target)
+                break;
+        }
+        if (j == count)
+            candidates[count++] = target;
+    }
+
+    if (count == 0)
+        return SPECIES_NONE;
+    return candidates[personality % count];
+}
+
 u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 mode, u16 evolutionItem)
 {
     int i, j;
@@ -9349,6 +9466,8 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 mode, u16 evolutionItem)
                 break;
             }
         }
+        if (targetSpecies == SPECIES_NONE && IsRKStyleActive())
+            targetSpecies = GetRKStyleLevelEvolution(species, level, personality);
         break;
     case EVO_MODE_TRADE:
         for (i = 0; i < EVOS_PER_MON; i++)

@@ -1952,6 +1952,9 @@ static bool8 Fishing_CheckForBite(struct Task *task)
             }
         }
 
+        if (IsRKStyleActive()) // RKstyle: the first cast always gets a bite
+            bite = TRUE;
+
         if (!bite)
         {
             if (Random() & 1)

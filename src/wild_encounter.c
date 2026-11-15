@@ -611,12 +611,22 @@ static bool8 AreLegendariesInSootopolisPreventingEncounters(void)
     return FlagGet(FLAG_GARBAGEFLAG);
 }
 
+// RKstyle: automatic repel. Once a Pokemon has been caught in a zone, no more wild
+// Pokemon appear there by any means (walking, surfing, fishing, Rock Smash, Sweet Scent).
+static bool8 IsRKStyleZoneClosed(void)
+{
+    return IsRKStyleActive() && IsNuzlockeActive() && NuzlockeFlagGet(NuzlockeGetCurrentRegionMapSectionId());
+}
+
 bool8 StandardWildEncounter(u16 curMetatileBehavior, u16 prevMetatileBehavior)
 {
     u16 headerId;
     struct Roamer *roamer;
 
     if (sWildEncountersDisabled == TRUE)
+        return FALSE;
+
+    if (IsRKStyleZoneClosed())
         return FALSE;
 
     headerId = GetCurrentMapWildMonHeaderId();
@@ -731,6 +741,9 @@ void RockSmashWildEncounter(void)
 {
     u16 headerId = GetCurrentMapWildMonHeaderId();
 
+    if (IsRKStyleZoneClosed())
+        headerId = HEADER_NONE;
+
     if (headerId != HEADER_NONE)
     {
         const struct WildPokemonInfo *wildPokemonInfo = gWildMonHeaders[headerId].rockSmashMonsInfo;
@@ -760,6 +773,9 @@ bool8 SweetScentWildEncounter(void)
 {
     s16 x, y;
     u16 headerId;
+
+    if (IsRKStyleZoneClosed())
+        return FALSE;
 
     PlayerGetDestCoords(&x, &y);
     headerId = GetCurrentMapWildMonHeaderId();
@@ -832,6 +848,9 @@ bool8 SweetScentWildEncounter(void)
 bool8 DoesCurrentMapHaveFishingMons(void)
 {
     u16 headerId = GetCurrentMapWildMonHeaderId();
+
+    if (IsRKStyleZoneClosed())
+        return FALSE;
 
     if (headerId != HEADER_NONE && gWildMonHeaders[headerId].fishingMonsInfo != NULL)
         return TRUE;

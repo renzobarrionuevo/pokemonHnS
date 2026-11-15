@@ -1,0 +1,434 @@
+==============================================================
+  REGLAS DEL MODO RKSTYLE - Pokemon Heart & Soul (version modificada)
+==============================================================
+
+Ultima actualizacion: 15/11/2026
+Estado: paginas 1, 2 y 3 del menu ya definidas. Pagina 4 casi completa.
+        Regla de captura por zona y repelente automatico agregados.
+        Paginas 5 y 6 todavia sin decidir (usan los valores normales
+        del juego).
+Aviso:  todo compila sin errores, pero nada se ha probado jugando aun.
+
+
+--------------------------------------------------------------
+1. QUE ES RKSTYLE Y COMO SE ACTIVA
+--------------------------------------------------------------
+
+RKstyle es un modo de juego nuevo. Al empezar una partida nueva aparece
+el menu de desafios, que tiene 6 paginas. En la pagina 4 (Nuzlocke), la
+primera fila ahora tiene cinco valores:
+
+    OFF / EASY / NORMAL / HARD / RK
+
+Al mover el selector hasta RK, el juego deja preseleccionadas de una sola
+vez todas las opciones descritas en este documento, en todas las paginas.
+
+- Los presets se aplican en el momento de elegir RK. Despues se puede
+  cambiar cualquier opcion a mano antes de confirmar.
+- Las reglas marcadas como "EXCLUSIVA DE RK" no son opciones del menu:
+  estan siempre activas en una partida RK y nunca en los otros modos.
+- En el selector se lee "RK" porque no cabe un texto mas largo. En la
+  pantalla de resumen de opciones aparece como "RKSTYLE".
+- RK solo se puede elegir al crear la partida. Una partida ya empezada
+  en otro modo no pasa a ser RK.
+
+
+--------------------------------------------------------------
+2. REGLAS BASE (NUZLOCKE)
+--------------------------------------------------------------
+
+CAPTURAS
+
+- Puedes capturar UN solo Pokemon por cada ruta, zona o area.
+
+- No hace falta que sea el primero que aparece. Puedes derrotar o huir
+  de todos los salvajes que quieras hasta que salga el que te interesa.
+
+- El Pokemon que captures tiene que ser nuevo: no puedes capturar uno
+  que ya hayas capturado antes, ni ninguno de su linea evolutiva.
+  Ejemplo: si ya capturaste un Pidgey, el juego no te deja lanzar Poke
+  Balls a otro Pidgey, ni a un Pidgeotto, ni a un Pidgeot.
+
+- Encontrarte con un Pokemon repetido no gasta la zona: sigues buscando
+  hasta que aparezca uno que si puedas capturar.
+
+- En cuanto capturas uno, la zona queda cerrada: se activa el repelente
+  automatico (seccion 3.5) y ya no aparecen mas salvajes ahi.
+
+MUERTES
+
+- Un Pokemon debilitado ya no se puede usar mas.
+- Si pierdes un combate NO se borra la partida (eso es solo del modo
+  HARD).
+
+FIN DEL NUZLOCKE
+
+- El juego da el Nuzlocke por terminado al vencer a Red.
+
+
+--------------------------------------------------------------
+3. REGLAS EXCLUSIVAS DE RK
+--------------------------------------------------------------
+
+3.1 Curacion automatica despues de cada combate
+
+    Al terminar cualquier combate (salvaje o contra entrenador, ganes,
+    huyas o captures), todos los Pokemon del equipo que sigan vivos
+    quedan como si hubieran pasado por el Centro Pokemon:
+      - PS al maximo
+      - PP de todos los movimientos al maximo
+      - sin veneno, quemadura, paralisis ni otro estado
+
+    Los Pokemon que se debilitaron en el combate NO se curan ni reviven.
+
+    Excepciones: no se aplica en combates por cable/link ni en el
+    Frente Batalla.
+
+3.2 Dinero inicial al maximo
+
+    La partida empieza con 9.999.999 de dinero, que es el tope del juego.
+    (En los demas modos se empieza con 3.000.)
+
+    Ojo: como ya estas en el tope, el dinero que ganes no suma nada
+    hasta que gastes.
+
+3.3 Regalo del ayudante del Profesor Elm
+
+    Cuando vuelves al laboratorio con el Huevo Misterioso, el ayudante
+    te da:
+      - 999 Ultra Balls (cantidad fija, nunca se sortea)
+      - 5 objetos al azar, entregados uno por uno. Pueden repetirse.
+
+    (En los demas modos da 5 Poke Balls.)
+
+3.4 Todos los Pokemon evolucionan por nivel
+
+    Ver la seccion 8, que tiene la lista completa.
+
+3.5 Repelente automatico en zonas ya capturadas
+
+    En cuanto capturas un Pokemon en una ruta, zona o area, se activa
+    un repelente permanente para esa zona: no vuelve a aparecer ningun
+    Pokemon salvaje, por ninguna via.
+
+    - Es un bloqueo total. No aparece ningun salvaje, sea del nivel que
+      sea, y tampoco aparecen shinies.
+    - Es permanente y no gasta ningun objeto.
+    - Cualquier captura cierra la zona, tambien la de un shiny.
+    - Vale para todas las formas de encontrar salvajes: caminar,
+      surfear, pescar, Golpe Roca y Dulce Aroma. Al pescar en una zona
+      cerrada nunca pica nada.
+    - Un huevo que eclosiona tambien cierra la zona donde nace (esto ya
+      era asi en el juego original).
+
+3.6 La cana de pescar siempre pica
+
+    Al lanzar la cana, siempre pica un Pokemon en el primer intento. Ya
+    no sale el mensaje de que no pico nada ni hay que volver a lanzar.
+
+    - Si en las opciones del juego la pesca esta en estilo Esmeralda,
+      todavia hay que pulsar A a tiempo cuando pica; si se te pasa, el
+      Pokemon se escapa.
+    - En una zona cerrada (seccion 3.5) no pica nada, como cualquier
+      otro encuentro.
+
+
+--------------------------------------------------------------
+4. PAGINA 1 DEL MENU - MODO
+--------------------------------------------------------------
+
+RK deja "Gamemode" en RECOMMENDED, que activa todo lo siguiente:
+
+  Modern Moves ........ ON   13 movimientos nuevos y mejores listas de
+                             movimientos para todos los Pokemon.
+  Synchronize ......... ON   Si tu primer Pokemon tiene la habilidad
+                             Sincronia, los salvajes salen siempre con su
+                             misma naturaleza. Solo afecta la naturaleza,
+                             no que Pokemon aparece.
+  Sturdy .............. ON   Robustez deja sobrevivir con 1 PS a un golpe
+                             mortal si el Pokemon tenia todos sus PS.
+                             Los rivales tambien lo aprovechan.
+  Sitrus Berry ........ ON   La Baya Zidra cura el 25% de los PS (en vez
+                             de 30 PS fijos).
+  Fairy Type .......... ON   Existe el tipo Hada.
+  Legendary Abilities . ON   Los legendarios cambian Presion por una
+                             habilidad mejor (lista abajo).
+  Infinite TMs ........ ON   Las MT no se gastan al usarlas.
+  Mints ............... ON   Las mentas (cambian el efecto de la
+                             naturaleza) se venden en la floristeria
+                             despues de la 4a medalla.
+  Survive Poison ...... ON   Fuera de combate, el veneno baja al Pokemon
+                             hasta 1 PS y se le pasa; no lo mata.
+
+Los 13 movimientos nuevos: Pulso Umbrio, Psicocorte, Onda Certera, Joya
+de Luz, Garra Umbria, Foco Resplandor, Tajo Aereo, Zumbido, Pulso Dragon,
+Tierra Viva, Carantona, Fuerza Lunar, Puya Nociva.
+
+Habilidades nuevas de los legendarios:
+  Articuno ... Velo Agua            Raikou .... Absorbe Electricidad
+  Zapdos ..... Pararrayos           Entei ..... Absorbe Fuego
+  Moltres .... Cuerpo Llama         Suicune ... Absorbe Agua
+  Mewtwo ..... Sincronia            Ho-Oh ..... Dicha
+                                    Lugia ..... Escama Especial
+
+Nota: como en RK las habilidades son al azar (seccion 6), esta tabla
+solo se cumple si se desactiva "Abilities" en el randomizer.
+
+
+--------------------------------------------------------------
+5. PAGINA 2 DEL MENU - CARACTERISTICAS
+--------------------------------------------------------------
+
+  RTC Type ........ FALSO       El juego usa un reloj propio acelerado:
+                                1 hora jugada = 1 dia completo. Se ven
+                                manana, dia y noche en cada sesion.
+  Shiny Chance .... 1/512       Probabilidad de shiny, 16 veces mas alta
+                                que la original (1/8192).
+  Shiny Colors .... ORIGINALES  Los shinies usan sus colores oficiales.
+  Item Drop ....... OFF         Los salvajes no sueltan su objeto al ser
+                                derrotados; solo se consigue capturando
+                                o con el movimiento Ladron.
+  Frontier Bans ... VETADOS     Los legendarios muy fuertes no pueden
+                                entrar al Frente Batalla (postgame).
+
+
+--------------------------------------------------------------
+6. PAGINA 3 DEL MENU - RANDOMIZER
+--------------------------------------------------------------
+
+  Randomizer ................ ON
+  Starter ................... AL AZAR  Los tres iniciales de Elm son
+                                       Pokemon al azar.
+  Wild Pokemon .............. AL AZAR  Los salvajes de cada ruta.
+  Trainer ................... AL AZAR  Los equipos de los entrenadores,
+                                       incluidos lideres de gimnasio.
+  Static .................... AL AZAR  Encuentros fijos (legendarios,
+                                       regalos). Segun el juego, no
+                                       cambian los Pokemon con nombre
+                                       propio, los del casino, los
+                                       errantes y algunos especiales.
+  Similar Evolution Level ... ON       Cada Pokemon se reemplaza por otro
+                                       de etapa evolutiva parecida: un
+                                       basico por otro basico. Evita un
+                                       Tyranitar salvaje en la ruta 1.
+                                       No tiene que ver con como
+                                       evolucionan tus Pokemon.
+  Include Legendaries ....... ON       Los legendarios entran al sorteo.
+  Type ...................... OFF      Los tipos no cambian. Pikachu es
+                                       siempre Electrico.
+  Moves ..................... AL AZAR  Movimientos que aprende cada
+                                       Pokemon al subir de nivel.
+  Abilities ................. AL AZAR  Habilidad de cada Pokemon.
+  Evolutions ................ OFF      Las lineas evolutivas no cambian:
+                                       Pidgey -> Pidgeotto -> Pidgeot.
+  Evolution Methods ......... OFF      No se barajan las lineas.
+  Type Effectiveness ........ OFF      La tabla de tipos es la normal.
+  Items ..................... AL AZAR  Objetos del suelo, ocultos y
+                                       regalados. Los objetos clave no
+                                       cambian. Las 999 Ultra Balls del
+                                       ayudante de Elm tampoco.
+  Chaos ..................... OFF
+
+
+--------------------------------------------------------------
+7. PAGINA 4 DEL MENU - NUZLOCKE
+--------------------------------------------------------------
+
+  Nuzlocke .......... RK
+  Species Clause .... ON         No puedes capturar un Pokemon que ya
+                                 capturaste antes, ni uno de su linea
+                                 evolutiva. El juego bloquea las Poke
+                                 Balls. Un encuentro bloqueado asi no
+                                 gasta la zona.
+  Shiny Clause ...... ON         Un shiny se puede capturar aunque su
+                                 linea evolutiva ya la tengas. En una
+                                 zona cerrada no aparece ningun salvaje,
+                                 tampoco shinies.
+  Nicknaming ........ ON         Es obligatorio ponerle apodo a cada
+                                 Pokemon capturado.
+  Deletion .......... CEMENTERIO Los debilitados van al PC y no se pueden
+                                 recuperar. (Valor normal del juego;
+                                 falta confirmar si se prefiere que se
+                                 liberen.)
+  Rare Candy ........ ON         Hay un Caramelo Raro infinito en el PC
+                                 desde el inicio.
+
+
+--------------------------------------------------------------
+8. EVOLUCIONES POR NIVEL (EXCLUSIVA DE RK)
+--------------------------------------------------------------
+
+8.1 La regla
+
+    Todo Pokemon que en el juego normal necesita una piedra, un objeto
+    equipado, amistad, saber un movimiento, belleza, estar en un lugar
+    concreto o que sea cierta hora del dia, en RK evoluciona al llegar
+    a un nivel.
+
+    - Los metodos originales siguen funcionando. Si usas la piedra o el
+      objeto antes de llegar al nivel, evoluciona igual.
+    - Si capturas un Pokemon que ya paso su nivel, evoluciona la proxima
+      vez que suba de nivel.
+    - La Piedra Eterna sigue impidiendo la evolucion.
+    - Los Pokemon que ya evolucionaban por nivel no cambian en nada.
+    - La Pokedex del juego sigue mostrando los metodos originales.
+
+8.2 Lista completa (una sola evolucion posible)
+
+    NIVEL 15 - Pokemon bebe
+      Pichu ........ Pikachu        (antes: amistad)
+      Cleffa ....... Clefairy       (antes: amistad)
+      Igglybuff .... Jigglypuff     (antes: amistad)
+      Togepi ....... Togetic        (antes: amistad)
+      Azurill ...... Marill         (antes: amistad)
+      Budew ........ Roselia        (antes: amistad)
+      Munchlax ..... Snorlax        (antes: amistad)
+      Chingling .... Chimecho       (antes: amistad de noche)
+      Happiny ...... Chansey        (antes: Escama Corazon equipada)
+      Bonsly ....... Sudowoodo      (antes: saber Mimetico)
+      Mime Jr. ..... Mr. Mime       (antes: saber Mimetico)
+      Mantyke ...... Mantine        (antes: saber Hidropulso)
+
+    NIVEL 20
+      Sunkern ...... Sunflora       (antes: Piedra Solar)
+
+    NIVEL 25
+      Porygon ...... Porygon2       (antes: Mejora equipada)
+      Skitty ....... Delcatty       (antes: Piedra Lunar)
+
+    NIVEL 30
+      Pikachu ...... Raichu         (antes: Piedra Trueno)
+      Clefairy ..... Clefable       (antes: Piedra Lunar)
+      Jigglypuff ... Wigglytuff     (antes: Piedra Lunar)
+      Vulpix ....... Ninetales      (antes: Piedra Fuego)
+      Growlithe .... Arcanine       (antes: Piedra Fuego)
+      Shellder ..... Cloyster       (antes: Piedra Agua)
+      Staryu ....... Starmie        (antes: Piedra Agua)
+      Exeggcute .... Exeggutor      (antes: Piedra Hoja)
+      Onix ......... Steelix        (antes: Revestimiento Metalico equipado)
+      Nosepass ..... Probopass      (antes: Piedra Trueno equipada)
+      Togetic ...... Togekiss       (antes: Escama Corazon equipada, de dia)
+      Misdreavus ... Mismagius      (antes: Hechizo equipado, de noche)
+      Feebas ....... Milotic        (antes: belleza)
+      Roselia ...... Roserade       (antes: belleza)
+      Lickitung .... Lickilicky     (antes: saber Desenrollar)
+      Tangela ...... Tangrowth      (antes: saber Poder Pasado)
+      Yanma ........ Yanmega        (antes: saber Poder Pasado)
+      Aipom ........ Ambipom        (antes: saber Cosquillas)
+      Girafarig .... Farigiraf      (antes: saber Doble Rayo)
+      Dunsparce .... Dudunsparce    (antes: saber Pico Taladro)
+      Stantler ..... Wyrdeer        (antes: saber Psicocorte)
+      Murkrow ...... Honchkrow      (antes: nivel 30 solo de noche)
+
+    NIVEL 35
+      Sneasel ...... Weavile        (antes: nivel 35 solo de noche)
+
+    NIVEL 36
+      Nidorina ..... Nidoqueen      (antes: Piedra Lunar)
+      Nidorino ..... Nidoking       (antes: Piedra Lunar)
+      Weepinbell ... Victreebel     (antes: Piedra Hoja)
+      Lombre ....... Ludicolo       (antes: Piedra Agua)
+      Nuzleaf ...... Shiftry        (antes: Piedra Hoja)
+      Golbat ....... Crobat         (antes: amistad)
+      Gligar ....... Gliscor        (antes: nivel 36 solo de noche)
+
+    NIVEL 40
+      Chansey ...... Blissey        (antes: amistad)
+      Magneton ..... Magnezone      (antes: Revestimiento Metalico equipado)
+      Seadra ....... Kingdra        (antes: Escama Dragon equipada)
+      Electabuzz ... Electivire     (antes: Piedra Trueno)
+      Magmar ....... Magmortar      (antes: Piedra Fuego)
+      Porygon2 ..... Porygon-Z      (antes: Mejora equipada)
+
+    NIVEL 44
+      Primeape ..... Annihilape     (antes: nivel 44 solo de noche)
+
+    NIVEL 45
+      Piloswine .... Mamoswine      (antes: saber Poder Pasado)
+      Dusclops ..... Dusknoir       (antes: Hechizo equipado)
+
+    NIVEL 50
+      Rhydon ....... Rhyperior      (antes: Revestimiento Metalico equipado)
+
+8.3 Pokemon con varias evoluciones posibles (multievo)
+
+    Como funciona: al llegar al nivel, el Pokemon evoluciona en UNA de
+    sus formas posibles. Cual le toca lo decide un numero interno que
+    cada Pokemon tiene desde que nace o aparece (su "personalidad"), y
+    no cambia nunca.
+
+    - Cada individuo esta "destinado" a una forma. No se puede saber
+      cual hasta que evoluciona.
+    - No es un sorteo en el momento: reiniciar el juego y volver a subir
+      de nivel da siempre el mismo resultado para ese Pokemon.
+    - Dos Pokemon de la misma especie pueden evolucionar en formas
+      distintas.
+    - Si quieres elegir tu la forma, usa la piedra o el objeto original
+      ANTES de que llegue al nivel.
+
+    NIVEL 25 - Eevee (8 formas posibles)
+      Jolteon ..... para elegirlo: Piedra Trueno
+      Vaporeon .... para elegirlo: Piedra Agua
+      Flareon ..... para elegirlo: Piedra Fuego
+      Leafeon ..... para elegirlo: Piedra Hoja
+      Espeon ...... para elegirlo: amistad alta, subir nivel de dia
+      Umbreon ..... para elegirlo: amistad alta, subir nivel de noche
+      Glaceon ..... para elegirlo: Antiderretir equipado y subir nivel
+      Sylveon ..... para elegirlo: Escama Corazon equipada y subir nivel
+
+    NIVEL 30 - Scyther (2 formas)
+      Scizor ...... para elegirlo: Revestimiento Metalico equipado
+      Kleavor ..... para elegirlo: subir nivel en Monte Plateado o
+                    Calle Victoria
+
+    NIVEL 30 - Clamperl (2 formas)
+      Huntail ..... para elegirlo: Diente Marino equipado
+      Gorebyss .... para elegirlo: Escama Marina equipada
+
+    NIVEL 36 - Gloom (2 formas)
+      Vileplume ... para elegirlo: Piedra Hoja
+      Bellossom ... para elegirlo: Piedra Solar
+
+    NIVEL 36 - Poliwhirl (2 formas)
+      Poliwrath ... para elegirlo: Piedra Agua
+      Politoed .... para elegirlo: Roca del Rey equipada
+
+    NIVEL 42 - Ursaring (2 formas)
+      Ursaluna ............... para elegirlo: llegar al nivel 42 (o subir
+                               de nivel despues) siendo de noche
+      Ursaluna Luna Carmesi .. para elegirlo: subir nivel en el Monte Moon
+
+8.4 Casos que NO cambian en RK
+
+    Estos Pokemon ya evolucionan por nivel hacia una de sus formas, asi
+    que RK no los toca. La otra forma sigue pidiendo su condicion
+    original:
+
+      Slowpoke ... nivel 37 -> Slowbro.
+                   Slowking: Roca del Rey equipada y subir nivel.
+      Kirlia ..... nivel 30 -> Gardevoir.
+                   Gallade: ser macho y subir nivel por la manana.
+      Snorunt .... nivel 42 -> Glalie.
+                   Froslass: ser hembra y subir nivel por la manana.
+
+    Estos tienen varias formas pero todas por nivel, igual que siempre:
+
+      Tyrogue .... nivel 20 -> Hitmonlee, Hitmonchan o Hitmontop segun
+                   sus estadisticas de Ataque y Defensa.
+      Wurmple .... nivel 7 -> Silcoon o Cascoon segun su personalidad.
+      Nincada .... nivel 20 -> Ninjask (y Shedinja si hay espacio).
+
+
+--------------------------------------------------------------
+9. PENDIENTE
+--------------------------------------------------------------
+
+- Pagina 4: confirmar si los debilitados van al PC (actual) o se liberan.
+- Pagina 5 (Dificultad): sin definir. Hoy: equipo de 6, sin limite de
+  nivel, experiencia normal, objetos permitidos para ti y para los
+  rivales, IVs y EVs normales, huir normal, Cuerda Huida y Excavar
+  funcionan.
+- Pagina 6 (Desafios): sin definir. Hoy: Centros Pokemon disponibles,
+  el PC cura, precios normales, evoluciones sin limite, sin desafio de
+  un solo tipo, estadisticas base normales, sin modo espejo.
+- Probar todo en el juego con una partida nueva en modo RK.

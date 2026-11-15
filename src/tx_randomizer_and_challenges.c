@@ -102,6 +102,11 @@ bool8 IsNuzlockeActive(void)
     return gSaveBlock1Ptr->tx_Challenges_Nuzlocke;
 }
 
+bool8 IsRKStyleActive(void)
+{
+    return gSaveBlock1Ptr->tx_Nuzlocke_RKStyle;
+}
+
 bool8 IsNuzlockeNicknamingActive(void)
 {
     if (!gSaveBlock1Ptr->tx_Challenges_Nuzlocke)

@@ -82,6 +82,8 @@ void ItemId_GetHoldEffectParam_Script();
 //tx_randomizer_and_challenges
 u16 RandomItemId(u16 itemId);
 u16 RandomItem(void);
+u16 GiveRKStyleUltraBalls(void);
+u16 GetRKStyleRandomItem(void);
 u16 RandomItemHidden(void);
 
 /* Expands to:

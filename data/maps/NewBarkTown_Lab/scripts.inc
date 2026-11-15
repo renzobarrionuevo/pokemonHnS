@@ -462,7 +462,10 @@ NewBarkTown_Lab_EventScript_TriggerAideGiveBalls::
 	turnobject OBJ_EVENT_ID_PLAYER, DIR_WEST
 	msgbox NewBarkTown_Lab_Text_AideGiveBalls, MSGBOX_DEFAULT
 	closemessage
+	specialvar VAR_RESULT, IsRKStyleActive
+	goto_if_eq VAR_RESULT, TRUE, NewBarkTown_Lab_EventScript_AideGiveBalls_RKStyle
 	giveitem ITEM_POKE_BALL, 5
+NewBarkTown_Lab_EventScript_AideGiveBalls_Continue::
 	goto_if_eq VAR_RESULT, FALSE, Common_EventScript_ShowBagIsFull
 	setflag FLAG_RECEIVED_FIRST_BALLS
 	setvar VAR_NEWBARKTOWN_LABSTATE, 6
@@ -471,6 +474,25 @@ NewBarkTown_Lab_EventScript_TriggerAideGiveBalls::
 	turnobject OBJ_EVENT_ID_PLAYER, DIR_SOUTH
 	release
 	end
+
+@ RKstyle: 999 Ultra Balls (never randomized) plus 5 random items
+NewBarkTown_Lab_EventScript_AideGiveBalls_RKStyle::
+	setvar VAR_0x8000, ITEM_ULTRA_BALL
+	setvar VAR_0x8001, 999
+	specialvar VAR_0x8007, GiveRKStyleUltraBalls
+	call EventScript_ObtainItemMessage
+	call NewBarkTown_Lab_EventScript_AideGiveRandomItem_RKStyle
+	call NewBarkTown_Lab_EventScript_AideGiveRandomItem_RKStyle
+	call NewBarkTown_Lab_EventScript_AideGiveRandomItem_RKStyle
+	call NewBarkTown_Lab_EventScript_AideGiveRandomItem_RKStyle
+	call NewBarkTown_Lab_EventScript_AideGiveRandomItem_RKStyle
+	setvar VAR_RESULT, TRUE
+	goto NewBarkTown_Lab_EventScript_AideGiveBalls_Continue
+
+NewBarkTown_Lab_EventScript_AideGiveRandomItem_RKStyle::
+	specialvar VAR_0x8002, GetRKStyleRandomItem
+	giveitem VAR_0x8002
+	return
 
 NewBarkTown_Lab_EventScript_Elm_Check_WhereIsEgg::
 	msgbox NewBarkTown_Lab_Text_ElmWaitingEggHatch, MSGBOX_DEFAULT

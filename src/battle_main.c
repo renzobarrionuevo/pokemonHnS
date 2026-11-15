@@ -63,6 +63,7 @@
 #include "cable_club.h"
 #include "wild_encounter.h"
 #include "tx_randomizer_and_challenges.h"
+#include "script_pokemon_util.h"
 #include "overworld.h"
 
 extern const struct BgTemplate gBattleBgTemplates[];
@@ -6062,12 +6063,33 @@ static void HandleEndTurn_FinishBattle(void)
                                         | BATTLE_TYPE_TOWER_LINK_MULTI
                                         | BATTLE_TYPE_RECORDED_LINK)))
             {
-                if (!NuzlockeIsSpeciesClauseActive && !OneTypeChallengeCaptureBlocked)
+                if (IsRKStyleActive())
+                {
+                    // RKstyle: a zone is only used up by actually catching a Pokemon there,
+                    // not by the first encounter.
+                    if (gBattleOutcome == B_OUTCOME_CAUGHT)
+                        NuzlockeFlagSet(NuzlockeGetCurrentRegionMapSectionId());
+                }
+                else if (!NuzlockeIsSpeciesClauseActive && !OneTypeChallengeCaptureBlocked)
                     NuzlockeFlagSet(NuzlockeGetCurrentRegionMapSectionId());
             }
             NuzlockeIsCaptureBlocked = FALSE;
             NuzlockeIsSpeciesClauseActive = FALSE;
             OneTypeChallengeCaptureBlocked = FALSE;
+        }
+
+        // RKstyle rule: after every battle the surviving party Pokemon are fully
+        // healed (HP, PP and status), like a Pokemon Center.
+        // Fainted Pokemon are never revived.
+        if (IsRKStyleActive())
+        {
+            if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK
+                                        | BATTLE_TYPE_LINK_IN_BATTLE
+                                        | BATTLE_TYPE_TOWER_LINK_MULTI
+                                        | BATTLE_TYPE_RECORDED_LINK
+                                        | BATTLE_TYPE_WALLY_TUTORIAL
+                                        | BATTLE_TYPE_FRONTIER)))
+                HealPlayerPartyExceptFainted();
         }
 
         RecordedBattle_SetPlaybackFinished();

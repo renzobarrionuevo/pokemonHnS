@@ -1251,6 +1251,19 @@ u16 RandomItemId(u16 itemId)
     return itemId;
 }
 
+// RKstyle: the script command 'additem' truncates the quantity to 8 bits (999 -> 231),
+// so the 999 Ultra Balls are added from C. Not affected by the item randomizer.
+u16 GiveRKStyleUltraBalls(void)
+{
+    return AddBagItem(ITEM_ULTRA_BALL, MAX_BAG_ITEM_CAPACITY);
+}
+
+// RKstyle: a truly random item from the randomizer's valid-item pool.
+u16 GetRKStyleRandomItem(void)
+{
+    return sRandomValidItems[Random() % RANDOM_ITEM_COUNT];
+}
+
 u16 RandomItem(void)
 {
     u16 itemId = RandomItemId(gSpecialVar_0x8000);

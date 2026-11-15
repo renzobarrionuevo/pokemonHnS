@@ -196,6 +196,7 @@ static const u8 sText_Nuz_Mode_Off[]        = _("OFF");
 static const u8 sText_Nuz_Mode_Easy[]       = _("EASY");
 static const u8 sText_Nuz_Mode_Standard[]   = _("NORMAL");
 static const u8 sText_Nuz_Mode_Hardcore[]   = _("HARD");
+static const u8 sText_Nuz_Mode_RKStyle[]    = _("RKSTYLE");
 static const u8 sText_Nuz_Fainting_Cemetery[]   = _("CEMETERY");
 static const u8 sText_Nuz_Fainting_Release[]    = _("RELEASE");
 
@@ -451,6 +452,8 @@ static u8 GetNuzlockeModeIndex(void)
         return 1;
     if (!gSaveBlock1Ptr->tx_Challenges_Nuzlocke)                   // case 0 in the menu switch
         return 0;
+    if (gSaveBlock1Ptr->tx_Nuzlocke_RKStyle)                       // case 4 in the menu switch
+        return 4;
     if (gSaveBlock1Ptr->tx_Challenges_NuzlockeHardcore)            // case 3 in the menu switch
         return 3;
     return 2;                                                      // case 2: standard Nuzlocke
@@ -759,7 +762,8 @@ static void Viewer_DrawRow_Page4(u8 visRow, u16 idx)
         u8 mode = GetNuzlockeModeIndex();
         const u8 *val = (mode == 1) ? sText_Nuz_Mode_Easy :
                         (mode == 2) ? sText_Nuz_Mode_Standard :
-                        (mode == 3) ? sText_Nuz_Mode_Hardcore : sText_Nuz_Mode_Off;
+                        (mode == 3) ? sText_Nuz_Mode_Hardcore :
+                        (mode == 4) ? sText_Nuz_Mode_RKStyle : sText_Nuz_Mode_Off;
         Viewer_DrawSingleValueRow(visRow, sText_Nuz_Mode, val, (idx == sCurIndex));
         break;
     }

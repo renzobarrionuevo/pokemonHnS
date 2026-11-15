@@ -231,6 +231,8 @@ void NewGameInitData(void)
     ResetFanClub();
     ResetLotteryCorner();
     WarpToTruck();
+    if (IsRKStyleActive()) // RKstyle: start with max money (MAX_MONEY in money.c)
+        SetMoney(&gSaveBlock1Ptr->money, 9999999);
     RunScriptImmediately(EventScript_ResetAllMapFlags);
     ResetMiniGamesRecords();
     InitUnionRoomChatRegisteredTexts();
