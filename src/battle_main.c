@@ -4769,6 +4769,10 @@ u8 IsRunningFromBattleImpossible(void)
 
     gPotentialItemEffectBattler = gActiveBattler;
 
+    // RKstyle: wild Pokemon can never flee (e.g. with Teleport)
+    if (IsRKStyleActive() && !(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && GetBattlerSide(gActiveBattler) == B_SIDE_OPPONENT)
+        return BATTLE_RUN_FORBIDDEN;
+
     if (holdEffect == HOLD_EFFECT_CAN_ALWAYS_RUN)
         return BATTLE_RUN_SUCCESS;
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)

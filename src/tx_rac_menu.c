@@ -2165,7 +2165,17 @@ static void ApplyRKStylePresets(void)
     sOptions->sel_randomizer[MENUITEM_RANDOM_CHAOS]                   = 0;
 
     // MENU_DIFFICULTY
-    sOptions->sel_difficulty[MENUITEM_DIFFICULTY_LEVEL_CAP]  = 1; // level cap = next gym's highest level
+    sOptions->sel_difficulty[MENUITEM_DIFFICULTY_PARTY_LIMIT]     = 0; // no party limit (6)
+    sOptions->sel_difficulty[MENUITEM_DIFFICULTY_LEVEL_CAP]       = 1; // level cap = next gym's highest level
+    sOptions->sel_difficulty[MENUITEM_DIFFICULTY_EXP_MULTIPLIER]  = 3; // x0: no battle EXP, levels come from candies
+    sOptions->sel_difficulty[MENUITEM_DIFFICULTY_ITEM_PLAYER]     = 1; // player can't use battle items (Poke Balls allowed)
+    sOptions->sel_difficulty[MENUITEM_DIFFICULTY_ITEM_TRAINER]    = 1; // trainers can't use battle items
+    sOptions->sel_difficulty[MENUITEM_DIFFICULTY_MAX_PARTY_IVS]   = 0; // normal IVs
+    sOptions->sel_difficulty[MENUITEM_DIFFICULTY_SCALING_IVS]     = 0;
+    sOptions->sel_difficulty[MENUITEM_DIFFICULTY_NO_EVS]          = 0; // EVs gained as usual
+    sOptions->sel_difficulty[MENUITEM_DIFFICULTY_SCALING_EVS]     = 0;
+    sOptions->sel_difficulty[MENUITEM_DIFFICULTY_LESS_ESCAPES]    = 0;
+    sOptions->sel_difficulty[MENUITEM_DIFFICULTY_ESCAPE_ROPE_DIG] = 0; // Escape Rope and Dig work
 
     // MENU_NUZLOCKE (0 = ON, 1 = OFF for these four rows)
     sOptions->sel_nuzlocke[MENUITEM_NUZLOCKE_SPECIES_CLAUSE] = 0; // Species Clause ON: can't catch an evolution line twice

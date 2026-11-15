@@ -8165,7 +8165,11 @@ static void Cmd_forcerandomswitch(void)
     }
     else
     {
-        TryDoForceSwitchOut();
+        // RKstyle: a wild Pokemon can't end the battle with Roar / Whirlwind
+        if (IsRKStyleActive() && GetBattlerSide(gBattlerAttacker) == B_SIDE_OPPONENT)
+            gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+        else
+            TryDoForceSwitchOut();
     }
 }
 

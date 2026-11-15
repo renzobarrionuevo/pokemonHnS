@@ -3,10 +3,10 @@
 ==============================================================
 
 Ultima actualizacion: 15/11/2026
-Estado: paginas 1, 2, 3 y 4 del menu ya definidas.
+Estado: paginas 1, 2, 3, 4 y 5 del menu ya definidas.
         Regla de captura por zona y repelente automatico agregados.
-        Paginas 5 y 6 todavia sin decidir (usan los valores normales
-        del juego).
+        Pagina 6 todavia sin decidir (usa los valores normales del
+        juego).
 Aviso:  todo compila sin errores, pero nada se ha probado jugando aun.
 
 
@@ -176,8 +176,9 @@ FIN DEL NUZLOCKE
       Despues de vencer a la Liga Pokemon ......... 70
       Despues de vencer a la Liga de Kanto ........ 100 (sin tope)
 
-    - Vale para los caramelos y tambien para la experiencia de los
-      combates: un Pokemon en el tope deja de ganar experiencia.
+    - Vale para los caramelos. Los combates en RK no dan experiencia
+      (pagina 5, Exp Multiplier x0), asi que los caramelos son la unica
+      forma de subir de nivel.
     - Afecta a las evoluciones por nivel (seccion 8): un Pokemon que
       evoluciona al 50 no puede hacerlo hasta tener las 8 medallas.
     - Es la opcion "Level Cap" de la pagina 5 del menu, que RK deja en
@@ -195,6 +196,21 @@ FIN DEL NUZLOCKE
     - Si llevaba un objeto equipado, el objeto vuelve a tu mochila.
     - Si la ultima caja se llena (30 Pokemon), los siguientes van al
       primer hueco libre de las demas cajas.
+
+3.10 Los Pokemon salvajes no pueden huir
+
+    Ningun Pokemon salvaje puede escaparse del combate, asi que nunca
+    pierdes una captura porque el Pokemon se fue.
+
+    - Teletransporte usado por un salvaje (Abra, por ejemplo) falla.
+    - Rugido y Remolino usados por un salvaje fallan y no terminan el
+      combate.
+    - Los legendarios errantes (los que normalmente huyen en el primer
+      turno) se quedan y pelean.
+    - En la Zona Safari los Pokemon no huyen: si lo intentan, sale el
+      mensaje de que no pueden escapar.
+    - Tu si puedes seguir huyendo de los combates salvajes, y puedes
+      usar Rugido o Remolino para terminar el combate tu mismo.
 
 
 --------------------------------------------------------------
@@ -317,6 +333,35 @@ solo se cumple si se desactiva "Abilities" en el randomizer.
                                  Raros en el PC de casa. RK no la usa
                                  porque ya da los caramelos en la mochila
                                  (seccion 3.7).
+
+
+--------------------------------------------------------------
+7b. PAGINA 5 DEL MENU - DIFICULTAD
+--------------------------------------------------------------
+
+  Party Limit ........ 6          Equipo completo de 6 Pokemon.
+  Level Cap .......... NORMAL     Tope de nivel segun medallas (seccion
+                                  3.8).
+  Exp Multiplier ..... x0         Los combates no dan experiencia. Los
+                                  niveles se suben solo con los caramelos
+                                  (seccion 3.7), hasta el tope.
+  Player Items ....... NO         No puedes usar objetos de la mochila
+                                  durante un combate (Pociones, Revivir,
+                                  etc.). Si funcionan los objetos
+                                  equipados por los Pokemon, y si puedes
+                                  lanzar Poke Balls para capturar.
+  Trainer Items ...... NO         Los entrenadores rivales tampoco usan
+                                  objetos. Hay paridad.
+  Max Party IVs ...... NORMALES   Tus Pokemon tienen IVs al azar, como en
+                                  el juego normal.
+  Scaling IVs ........ OFF        Los rivales tienen los IVs que el juego
+                                  les asigna.
+  No EVs ............. OFF        Tus Pokemon ganan EVs normalmente.
+  Scaling EVs ........ OFF        Los rivales no tienen EVs extra.
+  Less Escapes ....... OFF        Huir de un combate salvaje es igual de
+                                  facil que siempre.
+  Escape Rope / Dig .. FUNCIONAN  Cuerda Huida y Excavar sirven para
+                                  salir de cuevas y mazmorras.
 
 
 --------------------------------------------------------------
@@ -488,10 +533,6 @@ solo se cumple si se desactiva "Abilities" en el randomizer.
 9. PENDIENTE
 --------------------------------------------------------------
 
-- Pagina 5 (Dificultad): solo esta definido el tope de nivel (NORMAL).
-  El resto sin definir. Hoy: equipo de 6, experiencia normal, objetos permitidos para ti y para los
-  rivales, IVs y EVs normales, huir normal, Cuerda Huida y Excavar
-  funcionan.
 - Pagina 6 (Desafios): sin definir. Hoy: Centros Pokemon disponibles,
   el PC cura, precios normales, evoluciones sin limite, sin desafio de
   un solo tipo, estadisticas base normales, sin modo espejo.

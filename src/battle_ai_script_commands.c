@@ -10,6 +10,7 @@
 #include "random.h"
 #include "recorded_battle.h"
 #include "util.h"
+#include "tx_randomizer_and_challenges.h"
 #include "constants/abilities.h"
 #include "constants/battle_ai.h"
 #include "constants/battle_move_effects.h"
@@ -363,7 +364,7 @@ void BattleAI_SetupAIData(u8 defaultScoreMoves)
     else if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
         AI_THINKING_STRUCT->aiFlags = AI_SCRIPT_SAFARI;
     else if (gBattleTypeFlags & BATTLE_TYPE_ROAMER)
-        AI_THINKING_STRUCT->aiFlags = AI_SCRIPT_ROAMING;
+        AI_THINKING_STRUCT->aiFlags = IsRKStyleActive() ? AI_SCRIPT_CHECK_BAD_MOVE : AI_SCRIPT_ROAMING; // RKstyle: roamers fight instead of fleeing
     else if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
         AI_THINKING_STRUCT->aiFlags = AI_SCRIPT_FIRST_BATTLE;
     else if (gBattleTypeFlags & BATTLE_TYPE_FACTORY)
